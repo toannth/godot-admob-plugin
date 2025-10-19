@@ -30,8 +30,6 @@ static var consent_information := ConsentInformation.new()
 static var _on_consent_form_load_success_listener_callback
 static var _on_consent_form_load_failure_listener_callback
 
-static var _on_privacy_options_form_dismissed_callback
-
 static func load_consent_form(
 		on_consent_form_load_success_listener := func(consent_form : ConsentForm) : pass,
 		on_consent_form_load_failure_listener := func(form_error : FormError) : pass) -> void:
@@ -47,13 +45,3 @@ static func _on_consent_form_load_success_listener(UID : int) -> void:
 
 static func _on_consent_form_load_failure_listener(form_error_dictionary : Dictionary) -> void: 
 	_on_consent_form_load_failure_listener_callback.call_deferred(FormError.create(form_error_dictionary))
-
-static func show_privacy_options_form(on_privacy_options_form_dismissed := func(form_error : FormError) : pass) -> void:
-	if _plugin:
-		_on_privacy_options_form_dismissed_callback = on_privacy_options_form_dismissed
-		_plugin.show_privacy_options_form()
-		_plugin.connect("on_privacy_options_form_dismissed", _on_privacy_options_form_dismissed, CONNECT_ONE_SHOT)
-
-static func _on_privacy_options_form_dismissed(form_error_dictionary : Dictionary) -> void:
-	var form_error : FormError = FormError.create(form_error_dictionary) if not form_error_dictionary.is_empty() else null
-	_on_privacy_options_form_dismissed_callback.call_deferred(form_error)
