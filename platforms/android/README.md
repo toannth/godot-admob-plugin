@@ -33,7 +33,7 @@
      
 ## ❓ About 
 
-<img src="static/usage.webp" align="right"
+<img src="../../docs/assets/usage-android.webp" align="right"
      alt="Preview" width="auto" height="390">
 
 This repository is for a _Godot Engine Plugin_ that allows showing the ads offered by **AdMob** in an **easy** way, without worrying about the building or version, **just download and use**.

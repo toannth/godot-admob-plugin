@@ -32,7 +32,7 @@
 
 ## ❓ About 
 
-<img src="static/usage.webp" align="right"
+<img src="../../docs/assets/usage-ios.webp" align="right"
      alt="Preview" width="auto" height="390">
 
 
