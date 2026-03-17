@@ -54,4 +54,4 @@ jobs:
         COMMIT_HASH: ${{ github.sha }}
         GITHUB_REPOSITORY: ${{ github.repository }}
       run: |
-        python3 static/workflow_files/push.py
+        python3 .github/scripts/push.py

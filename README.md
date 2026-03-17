@@ -10,7 +10,7 @@
   **The complete solution for AdMob integration in Godot using GDScript or C#.**  
   Supports [Android][AndroidPlatform] and [iOS][iOSPlatform] natively.
 
-  ![Plugin Usage](static/usage.webp)
+  ![Plugin Usage](docs/assets/usage.webp)
 
   [🎬 Watch Video Tutorial](https://youtu.be/TB7WhP8mieo) • [📖 Read Documentation][DocumentationLink]
 
@@ -25,7 +25,7 @@
 ### 📥 Godot Asset Library (recommended)
 
 1. Find the AdMob plugin by `poing.studios` \
-   <img height=120 src="static/asset_library.png">
+   <img height=120 src="docs/assets/asset_library.png">
 2. Click **Download** and **Install**.
 
 <details>
@@ -45,7 +45,7 @@
     - **iOS**: Follow the [iOS Setup Guide][iOSPlatform].
 
 > [!TIP]
-> If the automatic download fails, you can manually trigger it via `Project → Tools → AdMob Manager → Download & Install`.
+> If the automatic download fails, you can manually trigger it via `Project → Tools → AdMob Manager → (Android/iOS) → Download & Install`.
 
 ## 🙋‍♂️ How to use
 After installation, the `MobileAds` singleton becomes available in any script.
