@@ -1,6 +1,11 @@
-# 📚 AdMob Doc Master Protocol
+---
+name: doc-master
+description: Synchronize documentation with code changes. Use when modifying APIs, installation steps, or project requirements to ensure MkDocs, README, and AGENTS.md are accurate.
+---
 
-Use this guide to keep all project documentation (MkDocs, README, context files) in sync with the codebase.
+# AdMob Doc Master Protocol
+
+Keep all project documentation in sync with the codebase.
 
 ## 📝 Sync Requirements
 

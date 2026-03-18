@@ -1,6 +1,11 @@
+---
+name: release-manager
+description: Manage and execute AdMob plugin releases. Use when bumping versions, generating changelogs, or validating GitHub release assets to ensure consistency across Godot, Android, and iOS.
+---
+
 # 🚀 AdMob Release Manager Protocol
 
-Use this guide when preparing a new plugin release to ensure consistency across all platforms and version strings.
+Ensure consistency across all platforms and version strings during a release.
 
 ## 📋 Pre-Release Checklist
 

@@ -1,6 +1,11 @@
+---
+name: parity-checker
+description: Ensure API parity between GDScript and C#. Use when adding new methods, signals, or features to the plugin bridge to verify that Mono users have identical functionality.
+---
+
 # 👯 AdMob API Parity Checker
 
-Use this guide to ensure that GDScript and C# implementations remain synchronized and consistent.
+Ensure that GDScript and C# implementations remain synchronized and consistent.
 
 ## ⚖️ The Parity Standard
 
