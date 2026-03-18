@@ -74,9 +74,9 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="AdMobAddon"
-run/main_scene="uid://bshvjiqlgngc8"
+run/main_scene="res://addons/admob/gdscript/sample/Main.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="uid://cg0bma40wb4dp"
+config/icon="res://addons/admob/assets/icon-1024.png"
 
 [display]
 
