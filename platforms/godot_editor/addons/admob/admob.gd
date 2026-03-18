@@ -32,7 +32,7 @@ var _android_exporter := preload("res://addons/admob/internal/exporters/android/
 var _ios_exporter := preload("res://addons/admob/internal/exporters/ios/export_plugin.gd").new()
 
 func _enter_tree() -> void:
-	CSharpService.manage_visibility()
+	Callable(CSharpService, &"manage_visibility").call_deferred(self)
 	add_export_plugin(_main_exporter)
 	add_export_plugin(_android_exporter)
 	add_export_plugin(_ios_exporter)

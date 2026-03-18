@@ -1,29 +1,20 @@
-# 🤖 Claude Code: Godot AdMob Editor Plugin
+# Godot AdMob Editor Plugin (Claude Context)
 
-> **Start here.** This file is Claude Code's primary context. See `AGENTS.md` for the full shared agent ruleset.
+## 🏗️ Build Commands
+- **Build Android:** `cd platforms/android && ./gradlew assembleDebug`
+- **Build iOS:** `cd platforms/ios && scons platform=ios`
+- **Clean Build (All):** `./scripts/build_local.sh`
 
-## ⚡ Claude-Specific Workflow
-- Always use `/compact` mode to minimize token usage during long sessions.
-- Outline your full plan **before** editing any file (especially cross-platform changes).
-- Reproduce bugs with a minimal script/test **before** fixing.
-- When exploring the architecture, prefer reading `AGENTS.md` key files directly over broad directory scans.
+## 📝 Code Style & Logic
+- **GDScript:** Use `:=` for type inference. No `class_name` in `addons/admob/internal/`.
+- **C#:** Use PascalCase. Follow GDScript API parity.
+- **Auto-Hide:** `csharp/` folder is managed by `CSharpService.gd`.
 
-## 🏗️ Architecture Quick Reference
-- **GDScript API:** `platforms/godot_editor/addons/admob/admob.gd`
-- **C# Bridge:** `platforms/godot_editor/addons/admob/csharp/`
-- **Android:** `platforms/android/` (Java/Kotlin, JNI)
-- **iOS:** `platforms/ios/` (Obj-C/Swift, SCons/SPM)
-- **`internal/` rule:** No `class_name` — use `preload` only.
+## 🔄 Cross-Platform Sync
+When adding or modifying ad formats or bridge methods, you **MUST** follow the multi-platform synchronization protocol:
+👉 [Read the Sync Protocol](.github/ai/guides/sync.md)
 
-## 📝 Non-Negotiable Standards
-- Every new file **must** start with the MIT License header (copy from `admob.gd`).
-- Use `:=` for type inference in GDScript.
-- **Cross-platform sync:** Any ad format API change must be mirrored across GDScript, C#, Android, and iOS.
-
-## 🚫 Never Read (Token Waste)
-- `platforms/*/build/`, `platforms/android/.gradle/`, `.godot/`, `docs/assets/`
-
-## 🔗 Key Files
-- `platforms/godot_editor/addons/admob/admob.gd`
-- `platforms/android/build.gradle`
-- `platforms/ios/Package.swift`
+## 🚫 Workflow Rules
+- Never stage or commit changes unless explicitly asked.
+- Always check `.claudeignore` to avoid wasting context tokens on build artifacts.
+- Reproduce bugs with a script before implementing a fix.

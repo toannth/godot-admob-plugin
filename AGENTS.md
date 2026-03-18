@@ -40,8 +40,9 @@ This file is the authoritative source of truth for AI agents (Gemini CLI, Claude
 - **Token Saver:** Do not search/read `platforms/*/build/`, `.godot/`, or `docs/assets/`.
 - **Security:** Never log or commit API Keys or `.env` files.
 - **Workflow:** 
+  - **Cross-Platform Sync:** When modifying bridge features, follow the protocol in `.github/ai/guides/sync.md`.
   - Always reproduce bugs with a minimal script or test before fixing.
-  - **Gemini:** Prioritize using codebase search or investigation tools for architectural questions before reading entire files.
+  - **Gemini:** Prioritize using codebase search or investigation tools for architectural questions.
   - **Claude:** See `CLAUDE.md` for specific command-line instructions.
 
 ## 🔗 Key Files for Quick Reference
