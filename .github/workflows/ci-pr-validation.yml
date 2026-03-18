@@ -1,12 +1,32 @@
-name: "[CI] 🧪 PR Validation"
+name: "[CI] PR Validation"
 
 on:
   pull_request:
     types: [opened, synchronize]
 
 jobs:
+  # Job to detect if code changes occurred
+  changes:
+    name: Check for code changes
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+    - uses: actions/checkout@v6
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          code:
+            - 'platforms/**'
+            - 'scripts/**'
+            - '.github/workflows/**'
+            - '!**.md'
+
   detect-latest:
     name: Check latest Godot version
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     outputs:
       godot_version: ${{ steps.detect.outputs.godot_version }}
@@ -23,8 +43,9 @@ jobs:
         echo "godot_version=$LATEST" >> $GITHUB_OUTPUT
 
   build-android:
-    name: "🏗️ Build: Android Plugin"
-    needs: detect-latest
+    name: "Build: Android Plugin"
+    needs: [changes, detect-latest]
+    if: needs.changes.outputs.code == 'true'
     runs-on: "ubuntu-latest"
     steps:
     - uses: actions/checkout@v6
@@ -57,8 +78,9 @@ jobs:
         retention-days: 14
 
   build-ios:
-    name: "🍎 Build: iOS Plugin"
-    needs: detect-latest
+    name: "Build: iOS Plugin"
+    needs: [changes, detect-latest]
+    if: needs.changes.outputs.code == 'true'
     runs-on: "macos-latest"
     steps:
     - uses: actions/checkout@v6
@@ -108,8 +130,9 @@ jobs:
         retention-days: 14
 
   build-apk:
-    name: "📱 Build: Test Project (Android APK)"
-    needs: [detect-latest, build-android]
+    name: "Build: Test Project (Android APK)"
+    needs: [changes, detect-latest, build-android]
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
@@ -259,3 +282,26 @@ jobs:
         name: AdMobAddon-v${{ needs.detect-latest.outputs.godot_version }}-${{ github.event.pull_request.head.sha }}
         path: platforms/godot_editor/.output/AdMobAddon.apk
         retention-days: 14
+
+  # FINAL STATUS JOB: This is what you should set as mandatory in GitHub
+  pr-validation-status:
+    name: "PR Validation Status"
+    needs: [changes, build-apk, build-ios]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check build results
+        run: |
+          # If code changes occurred, we MUST have successful builds
+          if [[ "${{ needs.changes.outputs.code }}" == "true" ]]; then
+            if [[ "${{ needs.build-apk.result }}" == "success" && "${{ needs.build-ios.result }}" == "success" ]]; then
+              echo "All code builds passed."
+              exit 0
+            else
+              echo "Code builds failed."
+              exit 1
+            fi
+          else
+            echo "No code changes detected, skipping builds and marking as success."
+            exit 0
+          fi
