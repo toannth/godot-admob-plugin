@@ -40,3 +40,4 @@ data_*/
 AdMobAddon.csproj
 AdMobAddon.sln
 *.skill
+platforms/godot_editor/addons/admob/csharp/.gdignore
