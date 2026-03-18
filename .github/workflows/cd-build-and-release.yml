@@ -1,4 +1,4 @@
-name: Build and Release
+name: "[Manual] 🚀 Release All Platforms"
 
 on: workflow_dispatch
 
@@ -12,17 +12,17 @@ jobs:
     - name: Set plugin version
       run: |
         PLUGIN_VERSION=$(grep "version=" platforms/godot_editor/addons/admob/plugin.cfg | cut -d'"' -f2)
-        echo "PLUGIN_VERSION=v${PLUGIN_VERSION}" >> $GITHUB_ENV
+        echo "PLUGIN_VERSION=${PLUGIN_VERSION}" >> $GITHUB_ENV
 
     - name: Fail if release already exists
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        if gh api "repos/${{ github.repository }}/releases/tags/${{ env.PLUGIN_VERSION }}" > /dev/null 2>&1; then
-          echo "::error::Release ${{ env.PLUGIN_VERSION }} already exists. Bump the version before releasing."
+        if gh api "repos/${{ github.repository }}/releases/tags/v${{ env.PLUGIN_VERSION }}" > /dev/null 2>&1; then
+          echo "::error::Release v${{ env.PLUGIN_VERSION }} already exists. Bump the version before releasing."
           exit 1
         fi
-        echo "No existing release found for ${{ env.PLUGIN_VERSION }}. Proceeding..."
+        echo "No existing release found for v${{ env.PLUGIN_VERSION }}. Proceeding..."
 
   android-template:
     name: Compiling Android (Godot ${{matrix.GODOT_VERSIONS}})
@@ -38,7 +38,7 @@ jobs:
     - name: Set plugin version
       run: |
         PLUGIN_VERSION=$(grep "version=" platforms/godot_editor/addons/admob/plugin.cfg | cut -d'"' -f2)
-        echo "PLUGIN_VERSION=v${PLUGIN_VERSION}" >> $GITHUB_ENV
+        echo "PLUGIN_VERSION=${PLUGIN_VERSION}" >> $GITHUB_ENV
 
     - name: Build Plugins
       working-directory: platforms/android
@@ -57,8 +57,8 @@ jobs:
         target_commit: ${{ github.ref_name }}
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: platforms/android/.output/poing-godot-admob-android-v${{matrix.GODOT_VERSIONS}}.zip
-        tag: ${{env.PLUGIN_VERSION}}
-        release_name: ${{env.PLUGIN_VERSION}}
+        tag: v${{env.PLUGIN_VERSION}}
+        release_name: v${{env.PLUGIN_VERSION}}
         overwrite: true
 
   ios-template:
@@ -75,7 +75,7 @@ jobs:
     - name: Set plugin version
       run: |
         PLUGIN_VERSION=$(grep "version=" platforms/godot_editor/addons/admob/plugin.cfg | cut -d'"' -f2)
-        echo "PLUGIN_VERSION=v${PLUGIN_VERSION}" >> $GITHUB_ENV
+        echo "PLUGIN_VERSION=${PLUGIN_VERSION}" >> $GITHUB_ENV
 
     - name: Verify matrix
       run: |
@@ -103,8 +103,8 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: platforms/ios/bin/release/*.zip
         file_glob: true
-        tag: ${{env.PLUGIN_VERSION}}
-        release_name: ${{env.PLUGIN_VERSION}}
+        tag: v${{env.PLUGIN_VERSION}}
+        release_name: v${{env.PLUGIN_VERSION}}
         overwrite: true
 
   godot_editor:
@@ -117,9 +117,9 @@ jobs:
     - name: Compress Godot Editor Plugin
       working-directory: platforms/godot_editor
       run: |
-        PLUGIN_VERSION=v$(grep "version=" addons/admob/plugin.cfg | cut -d'"' -f2)
-        zip -r "poing-godot-admob-${PLUGIN_VERSION}.zip" addons/admob
-        echo "ZIP_NAME=poing-godot-admob-${PLUGIN_VERSION}.zip" >> $GITHUB_ENV
+        PLUGIN_VERSION=$(grep "version=" addons/admob/plugin.cfg | cut -d'"' -f2)
+        zip -r "poing-godot-admob-v${PLUGIN_VERSION}.zip" addons/admob
+        echo "ZIP_NAME=poing-godot-admob-v${PLUGIN_VERSION}.zip" >> $GITHUB_ENV
         echo "PLUGIN_VERSION=${PLUGIN_VERSION}" >> $GITHUB_ENV
 
     - name: Upload zip to release
@@ -128,8 +128,8 @@ jobs:
         target_commit: ${{ github.ref_name }}
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: platforms/godot_editor/${{ env.ZIP_NAME }}
-        tag: ${{ env.PLUGIN_VERSION }}
-        release_name: ${{ env.PLUGIN_VERSION }}
+        tag: v${{ env.PLUGIN_VERSION }}
+        release_name: v${{ env.PLUGIN_VERSION }}
         overwrite: true
 
   release-finalize:
@@ -162,7 +162,7 @@ jobs:
       env:
         USERNAME: ${{ secrets.ASSET_LIBRARY_USERNAME }}
         PASSWORD: ${{ secrets.ASSET_LIBRARY_PASSWORD }}
-        VERSION: ${{ env.PLUGIN_VERSION }}
+        VERSION: v${{ env.PLUGIN_VERSION }}
         COMMIT_HASH: ${{ github.sha }}
         GITHUB_REPOSITORY: ${{ github.repository }}
       run: |

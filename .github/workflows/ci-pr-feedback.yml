@@ -1,4 +1,4 @@
-name: "CI: PR Feedback"
+name: "[CI] 💬 PR Feedback"
 
 on:
   workflow_run:
