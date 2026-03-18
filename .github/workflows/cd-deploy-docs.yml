@@ -1,4 +1,4 @@
-name: "CD: Deploy Documentation" 
+name: "[CD] 📚 Deploy Documentation"
 on:
   push:
     branches:
