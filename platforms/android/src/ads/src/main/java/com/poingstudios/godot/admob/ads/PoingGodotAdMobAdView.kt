@@ -96,6 +96,16 @@ class PoingGodotAdMobAdView(godot: Godot?) : org.godotengine.godot.plugin.GodotP
     }
 
     @UsedByGodot
+    fun update_position(uid: Int, position: Int) {
+        banners[uid]?.updatePosition(position)
+    }
+
+    @UsedByGodot
+    fun update_position(uid: Int, x: Int, y: Int) {
+        banners[uid]?.updatePosition(x, y)
+    }
+
+    @UsedByGodot
     fun get_width(uid : Int) : Int{
         return banners[uid]?.getWidth() ?: -1
     }

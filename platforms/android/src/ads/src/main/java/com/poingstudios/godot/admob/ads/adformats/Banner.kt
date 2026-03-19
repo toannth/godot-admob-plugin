@@ -52,11 +52,23 @@ class Banner(
     pluginName: String,
     adViewDictionary: Dictionary
 ) : AdFormatsBase(uid, activity, godot) {
-    private var safeArea = getSafeArea()
-    private val adPosition: Int = adViewDictionary.getInt("ad_position")
+    private var safeArea: Rect = getSafeArea()
+    private var adPosition: Position = extractPosition(adViewDictionary["ad_position"] as Dictionary)
     private lateinit var mAdView: AdView
     private lateinit var mAdSize: AdSize
     private var isHidden : Boolean = false
+
+    data class Position(
+        val adPosition: Int?,
+        val customX: Int,
+        val customY: Int
+    )
+
+    private fun extractPosition(dict: Dictionary): Position {
+        val pos = if (dict.getInt("ad_position") == -1) null else dict.getInt("ad_position")
+        val customPos = dict["custom_position"] as Dictionary
+        return Position(pos, customPos.getInt("x"), customPos.getInt("y"))
+    }
 
     private val mLayoutChangeListener =
         OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
@@ -102,6 +114,7 @@ class Banner(
             mAdView.setAdSize(adSize)
             mAdSize = mAdView.adSize!!
             mAdView.adUnitId = adUnitId
+
             val layoutParams = getLayoutParams()
 
             godotLayout.addView(mAdView, layoutParams)
@@ -168,7 +181,7 @@ class Banner(
             AdPosition.BOTTOM_LEFT.ordinal -> Gravity.BOTTOM or Gravity.START
             AdPosition.BOTTOM_RIGHT.ordinal -> Gravity.BOTTOM or Gravity.END
             AdPosition.CENTER.ordinal -> Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
-            else -> throw IllegalArgumentException("Value of ad_position invalid")
+            else -> Gravity.TOP or Gravity.START // Default base for custom coordinates (adPosition == null)
         }
 
         return gravity
@@ -180,18 +193,24 @@ class Banner(
             FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT
         )
 
-        adParams.gravity = getGravity(adPosition)
-        adParams.bottomMargin = safeArea.bottom
-        adParams.rightMargin = safeArea.right
-        adParams.leftMargin = safeArea.left
-        adParams.topMargin = calculateTopMargin(adParams.topMargin)
+        adParams.gravity = getGravity(adPosition.adPosition)
+
+        if (adPosition.adPosition == null) {
+            adParams.leftMargin = adPosition.customX
+            adParams.topMargin = adPosition.customY
+        } else {
+            adParams.bottomMargin = safeArea.bottom
+            adParams.rightMargin = safeArea.right
+            adParams.leftMargin = safeArea.left
+            adParams.topMargin = calculateTopMargin(adParams.topMargin)
+        }
 
         return adParams
     }
 
-    private fun calculateTopMargin(topMargin : Int) : Int{
+    private fun calculateTopMargin(topMargin : Int) : Int {
         var returnValue = topMargin
-        when (adPosition) {
+        when (adPosition.adPosition) {
             AdPosition.TOP.ordinal, AdPosition.TOP_LEFT.ordinal, AdPosition.TOP_RIGHT.ordinal -> {
                 val windowInsets = activity.window?.decorView?.rootWindowInsets
                 if (windowInsets != null) {
@@ -212,12 +231,25 @@ class Banner(
     }
 
 
-    private fun updatePosition(){
-        activity.runOnUiThread{
-            val layoutParams = getLayoutParams()
-            mAdView.layoutParams = layoutParams
+    private fun updatePosition() {
+        val layoutParams = getLayoutParams()
+        mAdView.layoutParams = layoutParams
+    }
+
+    fun updatePosition(newPosition: Int) {
+        activity.runOnUiThread {
+            adPosition = Position(newPosition, 0, 0)
+            updatePosition()
         }
     }
+
+    fun updatePosition(x: Int, y: Int) {
+        activity.runOnUiThread {
+            adPosition = Position(null, x, y)
+            updatePosition()
+        }
+    }
+
 
     fun loadAd(adRequest: AdRequest){
         activity.runOnUiThread {

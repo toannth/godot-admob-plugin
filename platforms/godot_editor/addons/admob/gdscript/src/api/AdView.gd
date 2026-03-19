@@ -28,16 +28,16 @@ static var _plugin := _get_plugin("PoingGodotAdMobAdView")
 var ad_listener := AdListener.new()
 var _uid: int
 
-var ad_position: int
+var ad_position: AdPosition
 
 
-func _init(ad_unit_id: String, ad_size: AdSize, ad_position: AdPosition.Values) -> void:
+func _init(ad_unit_id: String, ad_size: AdSize, ad_position: AdPosition) -> void:
 	self.ad_position = ad_position
 
 	if _plugin:
 		var ad_view_dictionary := {
 			"ad_unit_id": ad_unit_id,
-			"ad_position": ad_position,
+			"ad_position": ad_position.convert_to_dictionary(),
 			"ad_size": {
 				"width": ad_size.width,
 				"height": ad_size.height
@@ -67,6 +67,18 @@ func hide() -> void:
 func show() -> void:
 	if _plugin:
 		_plugin.show(_uid)
+
+func set_position(ad_position: AdPosition) -> void:
+	self.ad_position = ad_position
+	if _plugin:
+		var position_dictionary: Dictionary = ad_position.convert_to_dictionary()
+		if position_dictionary["ad_position"] == -1:
+			_plugin.update_position(_uid, position_dictionary["custom_position"]["x"], position_dictionary["custom_position"]["y"])
+		else:
+			_plugin.update_position(_uid, position_dictionary["ad_position"])
+
+func set_custom_position(x: int, y: int) -> void:
+	set_position(AdPosition.custom(x, y))
 
 func get_width() -> int:
 	if _plugin:
