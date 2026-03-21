@@ -227,6 +227,7 @@ class Banner(
     fun hide() {
         activity.runOnUiThread {
             mAdView.visibility = FrameLayout.GONE
+            mAdView.pause()
             isHidden = true
         }
     }
@@ -234,6 +235,7 @@ class Banner(
     fun show() {
         activity.runOnUiThread {
             mAdView.visibility = FrameLayout.VISIBLE
+            mAdView.resume()
             isHidden = false
             updatePosition()
         }

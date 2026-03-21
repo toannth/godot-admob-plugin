@@ -29,6 +29,7 @@ var _ad_listener := AdListener.new()
 var _ad_position := AdPosition.TOP
 
 @onready var _load_button: Button = $ActionsCard/VBox/BannerActions/LoadBanner
+@onready var _load_background_button: Button = $ActionsCard/VBox/BannerActions/LoadBannerBackground
 @onready var _destroy_button: Button = $ActionsCard/VBox/BannerActions/DestroyBanner
 @onready var _show_button: Button = $ActionsCard/VBox/BannerActions/ShowBanner
 @onready var _hide_button: Button = $ActionsCard/VBox/BannerActions/HideBanner
@@ -51,22 +52,36 @@ func _ready() -> void:
 
 func _update_ui_state(is_loaded: bool) -> void:
 	if is_instance_valid(_load_button): _load_button.disabled = is_loaded
+	if is_instance_valid(_load_background_button): _load_background_button.disabled = is_loaded
 	if is_instance_valid(_destroy_button): _destroy_button.disabled = !is_loaded
 	if is_instance_valid(_show_button): _show_button.disabled = !is_loaded
 	if is_instance_valid(_hide_button): _hide_button.disabled = !is_loaded
 	if is_instance_valid(_get_size_button): _get_size_button.disabled = !is_loaded
 
-func _on_load_banner_pressed() -> void:
+func _get_ad_unit_id() -> String:
+	return "ca-app-pub-3940256099942544/2934735716" if OS.get_name() == "Android" else "ca-app-pub-3940256099942544/2934735716"
+
+func _load_banner(hide_immediately: bool = false) -> void:
 	if _ad_view:
 		_ad_view.destroy()
 	
 	_update_ui_state(false)
-	_log("Loading adaptive banner...")
+	_log("Loading adaptive banner%s..." % (" in background" if hide_immediately else ""))
 	
 	var ad_size := AdSize.get_current_orientation_anchored_adaptive_banner_ad_size(AdSize.FULL_WIDTH)
-	_ad_view = AdView.new("ca-app-pub-3940256099942544/2934735716", ad_size, _ad_position)
+	_ad_view = AdView.new(_get_ad_unit_id(), ad_size, _ad_position)
 	_ad_view.ad_listener = _ad_listener
+	
+	if hide_immediately:
+		_ad_view.hide()
+		
 	_ad_view.load_ad(AdRequest.new())
+
+func _on_load_banner_pressed() -> void:
+	_load_banner(false)
+
+func _on_load_banner_background_pressed() -> void:
+	_load_banner(true)
 
 func _on_destroy_banner_pressed() -> void:
 	if _ad_view:
