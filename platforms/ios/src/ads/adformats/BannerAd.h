@@ -26,10 +26,25 @@
 #import "../PoingGodotAdMobAdView.h"
 #import "AdFormatBase.h"
 
+enum class AdPosition {
+    Top,
+    Bottom,
+    Left,
+    Right,
+    TopLeft,
+    TopRight,
+    BottomLeft,
+    BottomRight,
+    Center,
+    Custom = -1
+};
+
 @interface BannerAd : AdFormatBase <GADBannerViewDelegate>
 
 @property (nonatomic, strong) GADBannerView *bannerView;
 @property (nonatomic, strong) NSNumber *adPosition;
+@property (nonatomic) int customX;
+@property (nonatomic) int customY;
 @property (nonatomic) BOOL isHidden;
 
 - (instancetype)initWithUID:(int)UID adViewDictionary:(Dictionary)adViewDictionary;
@@ -41,21 +56,9 @@
 - (int)getHeight;
 - (int)getWidthInPixels;
 - (int)getHeightInPixels;
+- (void)updateBannerPositionForAdPosition:(AdPosition)adPosition;
+- (void)updateBannerPositionForCustomPositionX:(int)x y:(int)y;
 
 @end
-
-
-enum class AdPosition {
-    Top,
-    Bottom,
-    Left,
-    Right,
-    TopLeft,
-    TopRight,
-    BottomLeft,
-    BottomRight,
-    Center,
-    Custom = -1 //NOT USED YET
-};
 
 #endif /* BannerAd_h */

@@ -1,17 +1,17 @@
 # MIT License
-
+#
 # Copyright (c) 2023-present Poing Studios
-
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,16 +28,23 @@ static var _plugin := _get_plugin("PoingGodotAdMobAdView")
 var ad_listener := AdListener.new()
 var _uid: int
 
+var ad_unit_id: String
+var ad_size: AdSize
 var ad_position: AdPosition
 
-
 func _init(ad_unit_id: String, ad_size: AdSize, ad_position: AdPosition) -> void:
+	self.ad_unit_id = ad_unit_id
+	self.ad_size = ad_size
 	self.ad_position = ad_position
 
 	if _plugin:
 		var ad_view_dictionary := {
 			"ad_unit_id": ad_unit_id,
-			"ad_position": ad_position.convert_to_dictionary(),
+			"ad_position": ad_position.value,
+			"custom_position": {
+				"x": ad_position.offset.x,
+				"y": ad_position.offset.y
+			},
 			"ad_size": {
 				"width": ad_size.width,
 				"height": ad_size.height
@@ -71,14 +78,10 @@ func show() -> void:
 func set_position(ad_position: AdPosition) -> void:
 	self.ad_position = ad_position
 	if _plugin:
-		var position_dictionary: Dictionary = ad_position.convert_to_dictionary()
-		if position_dictionary["ad_position"] == -1:
-			_plugin.update_position(_uid, position_dictionary["custom_position"]["x"], position_dictionary["custom_position"]["y"])
+		if ad_position.value == AdPosition.Values.CUSTOM:
+			_plugin.update_custom_position(_uid, ad_position.offset.x, ad_position.offset.y)
 		else:
-			_plugin.update_position(_uid, position_dictionary["ad_position"])
-
-func set_custom_position(x: int, y: int) -> void:
-	set_position(AdPosition.custom(x, y))
+			_plugin.update_position(_uid, ad_position.value)
 
 func get_width() -> int:
 	if _plugin:

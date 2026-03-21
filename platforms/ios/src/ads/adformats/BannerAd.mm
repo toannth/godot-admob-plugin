@@ -9,8 +9,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -28,8 +28,11 @@
            adViewDictionary:(Dictionary)adViewDictionary {
   if ((self = [super init])) {
     self.UID = [NSNumber numberWithInt:UID];
-    self.adPosition =
-        [NSNumber numberWithInt:(int)adViewDictionary["ad_position"]];
+    
+    self.adPosition = [NSNumber numberWithInt:(int)adViewDictionary["ad_position"]];
+    Dictionary customPositionDictionary = (Dictionary)adViewDictionary["custom_position"];
+    self.customX = (int)customPositionDictionary["x"];
+    self.customY = (int)customPositionDictionary["y"];
 
     String adUnitId = (String)adViewDictionary["ad_unit_id"];
     Dictionary adSizeDictionary = (Dictionary)adViewDictionary["ad_size"];
@@ -102,9 +105,12 @@
   [window addSubview:bannerView];
   [window bringSubviewToFront:bannerView];
 
-  // CENTER ON MIDDLE OF SCREEN
-  [self updateBannerPositionForAdPosition:static_cast<AdPosition>(
-                                              [self.adPosition intValue])];
+  int posInt = [self.adPosition intValue];
+  if (posInt == -1) {
+      [self updateBannerPositionForCustomPositionX:self.customX y:self.customY];
+  } else {
+      [self updateBannerPositionForAdPosition:static_cast<AdPosition>(posInt)];
+  }
 }
 
 - (void)addConstraintForBannerView:(NSLayoutAttribute)attribute
@@ -147,12 +153,12 @@
 
   switch (adPosition) {
   case AdPosition::Top:
-    [self addConstraintForBannerView:NSLayoutAttributeCenterX toView:window];
+    [self addConstraintForBannerView:NSLayoutAttributeCenterX toView:safeArea];
     [self addConstraintForBannerView:NSLayoutAttributeTop toView:safeArea];
     break;
 
   case AdPosition::Bottom:
-    [self addConstraintForBannerView:NSLayoutAttributeCenterX toView:window];
+    [self addConstraintForBannerView:NSLayoutAttributeCenterX toView:safeArea];
     [self addConstraintForBannerView:NSLayoutAttributeBottom toView:safeArea];
     break;
 
@@ -187,19 +193,37 @@
     break;
 
   case AdPosition::Center:
-    [self addConstraintForBannerView:NSLayoutAttributeCenterX toView:window];
-    [self addConstraintForBannerView:NSLayoutAttributeCenterY toView:window];
+    [self addConstraintForBannerView:NSLayoutAttributeCenterX toView:safeArea];
+    [self addConstraintForBannerView:NSLayoutAttributeCenterY toView:safeArea];
     break;
 
   case AdPosition::Custom:
-    [self addConstraintForBannerView:NSLayoutAttributeLeft
-                              toView:safeArea
-                   attributeConstant:0];
-    [self addConstraintForBannerView:NSLayoutAttributeTop
-                              toView:safeArea
-                   attributeConstant:0];
     break;
   }
+
+  [window layoutIfNeeded];
+}
+
+- (void)updateBannerPositionForCustomPositionX:(int)x y:(int)y {
+  self.adPosition = [NSNumber numberWithInt:-1];
+  self.customX = x;
+  self.customY = y;
+  
+  UIWindow *window = [WindowHelper getCurrentWindow];
+
+  if (!window) {
+    NSLog(@"PoingGodotAdMob: Window is nil, cannot update banner position.");
+    return;
+  }
+
+  [window removeConstraints:self.bannerView.constraints];
+
+  [self addConstraintForBannerView:NSLayoutAttributeLeft
+                            toView:window
+                 attributeConstant:x];
+  [self addConstraintForBannerView:NSLayoutAttributeTop
+                            toView:window
+                 attributeConstant:y];
 
   [window layoutIfNeeded];
 }
@@ -212,14 +236,13 @@
     return;
   }
 
-  UIViewController *rootViewController =
-      [WindowHelper getCurrentRootViewController];
+  UIWindow *window = [WindowHelper getCurrentWindow];
 
-  if (!rootViewController || !rootViewController.view) {
+  if (!window) {
     return;
   }
 
-  [rootViewController.view
+  [window
       addConstraint:[NSLayoutConstraint constraintWithItem:self.bannerView
                                                  attribute:attribute
                                                  relatedBy:NSLayoutRelationEqual

@@ -31,7 +31,8 @@ enum Values {
 	TOP_RIGHT,
 	BOTTOM_LEFT,
 	BOTTOM_RIGHT,
-	CENTER
+	CENTER,
+	CUSTOM = -1
 }
 
 static var TOP := AdPosition.new(Values.TOP)
@@ -44,23 +45,12 @@ static var BOTTOM_LEFT := AdPosition.new(Values.BOTTOM_LEFT)
 static var BOTTOM_RIGHT := AdPosition.new(Values.BOTTOM_RIGHT)
 static var CENTER := AdPosition.new(Values.CENTER)
 
-var _value: int
-var _x: int = -1
-var _y: int = -1
+var value: int
+var offset := Vector2i(Values.CUSTOM, Values.CUSTOM)
 
-func _init(value: int, x: int = -1, y: int = -1) -> void:
-	_value = value
-	_x = x
-	_y = y
+func _init(value: int, offset := Vector2i(Values.CUSTOM, Values.CUSTOM)) -> void:
+	self.value = value
+	self.offset = offset
 
 static func custom(x: int, y: int) -> AdPosition:
-	return AdPosition.new(-1, x, y)
-
-func convert_to_dictionary() -> Dictionary:
-	return {
-		"ad_position": _value,
-		"custom_position": {
-			"x": _x,
-			"y": _y
-		}
-	}
+	return AdPosition.new(Values.CUSTOM, Vector2i(x, y))
