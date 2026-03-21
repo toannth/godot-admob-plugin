@@ -42,19 +42,28 @@ public partial class Banner : VBoxContainer
 	private Button _hideBtn;
 	private Button _getSizeBtn;
 
+	private LineEdit _xValue;
+	private LineEdit _yValue;
+
 	public override void _Ready()
 	{
-		_loadBtn = GetNode<Button>("LoadBanner");
-		_destroyBtn = GetNode<Button>("DestroyBanner");
-		_showBtn = GetNode<Button>("ShowBanner");
-		_hideBtn = GetNode<Button>("HideBanner");
-		_getSizeBtn = GetNode<Button>("GetSize");
+		_loadBtn = GetNode<Button>("%BannerActions/LoadBanner");
+		_destroyBtn = GetNode<Button>("%BannerActions/DestroyBanner");
+		_showBtn = GetNode<Button>("%BannerActions/ShowBanner");
+		_hideBtn = GetNode<Button>("%BannerActions/HideBanner");
+		_getSizeBtn = GetNode<Button>("%BannerActions/GetSize");
 
 		_loadBtn.Pressed += OnLoadPressed;
 		_destroyBtn.Pressed += OnDestroyPressed;
 		_showBtn.Pressed += OnShowPressed;
 		_hideBtn.Pressed += OnHidePressed;
 		_getSizeBtn.Pressed += OnGetSizePressed;
+
+		_xValue = GetNode<LineEdit>("%XValue");
+		_yValue = GetNode<LineEdit>("%YValue");
+
+		var applyCustomBtn = GetNode<Button>("CustomCard/VBox/HBox/ApplyCustom");
+		applyCustomBtn.Pressed += OnApplyCustomPressed;
 
 		var grid = GetNode<GridContainer>("PositionCard/VBox/PositionGrid");
 		grid.GetNode<Button>("TOP_LEFT").Pressed += () => SetPosition(AdPosition.TopLeft);
@@ -81,7 +90,19 @@ public partial class Banner : VBoxContainer
 	{
 		_currentPosition = pos;
 		Log($"Position updated to: {pos}");
-		if (_adView != null) OnLoadPressed();
+		if (_adView != null) 
+		{
+			_adView.SetPosition(pos);
+			SampleRegistry.SafeArea?.UpdateAdOverlap(_adView);
+		}
+	}
+
+	private void OnApplyCustomPressed()
+	{
+		if (int.TryParse(_xValue.Text, out int x) && int.TryParse(_yValue.Text, out int y))
+		{
+			SetPosition(AdPosition.Custom(x, y));
+		}
 	}
 
 	private void OnLoadPressed()
