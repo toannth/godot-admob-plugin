@@ -118,8 +118,8 @@ func _on_get_size_pressed() -> void:
 		_log(info)
 
 func _on_apply_custom_pressed() -> void:
-	var x = int(_x_value.text)
-	var y = int(_y_value.text)
+	var x := int(_x_value.text)
+	var y := int(_y_value.text)
 	_log("Applying custom position: (%d, %d)" % [x, y])
 	_update_position(AdPosition.custom(x, y))
 

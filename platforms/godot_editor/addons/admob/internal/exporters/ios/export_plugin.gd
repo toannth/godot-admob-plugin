@@ -26,8 +26,8 @@ const ExportService := preload("res://addons/admob/internal/services/export_serv
 const PbxprojService := preload("res://addons/admob/internal/services/pbxproj_service.gd")
 const PLUGIN_CONFIG_DIR := "res://ios/plugins/"
 
-var _export_path: String = ""
-var _is_ios: bool = false
+var _export_path := ""
+var _is_ios := false
 var _spm_dependencies: Array[Dictionary] = []
 
 func _get_name() -> String:
