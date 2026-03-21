@@ -122,10 +122,8 @@ func _on_apply_custom_pressed() -> void:
 	var y = int(_y_value.text)
 	_log("Applying custom position: (%d, %d)" % [x, y])
 	_update_position(AdPosition.custom(x, y))
-	
-	# Oculta o teclado virtual após a confirmação
-	DisplayServer.virtual_keyboard_hide()
 
+	DisplayServer.virtual_keyboard_hide()
 #region Callbacks
 func _on_ad_failed_to_load(error: LoadAdError) -> void:
 	_log("Failed to load: " + error.message)
