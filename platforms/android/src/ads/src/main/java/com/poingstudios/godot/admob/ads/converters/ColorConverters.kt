@@ -19,37 +19,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+package com.poingstudios.godot.admob.ads.converters
 
-package com.poingstudios.godot.admob.ads
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
-
-/**
- * Unit tests for volume clamping used by set_app_volume.
- * Verifies clampAppVolume clamps to [0.0, 1.0] as required by MobileAds.setAppVolume.
- */
-class PoingGodotAdMobVolumeTest {
-
-    @Test
-    fun clampAppVolume_withinRange_returnsSame() {
-        assertEquals(0.5f, clampAppVolume(0.5f), 0.001f)
-        assertEquals(0f, clampAppVolume(0f), 0.001f)
-        assertEquals(1f, clampAppVolume(1f), 0.001f)
+fun String.toAndroidColor(): Int {
+    if (this.isEmpty()) return Color.TRANSPARENT
+    var hex = this
+    if (hex.length == 9) { // #rrggbbaa
+        val rr = hex.substring(1, 3)
+        val gg = hex.substring(3, 5)
+        val bb = hex.substring(5, 7)
+        val aa = hex.substring(7, 9)
+        hex = "#$aa$rr$gg$bb"
     }
+    return Color.parseColor(hex)
+}
 
-    @Test
-    fun clampAppVolume_negative_clampsToZero() {
-        assertEquals(0f, clampAppVolume(-1f), 0.001f)
-        assertEquals(0f, clampAppVolume(-0.5f), 0.001f)
-        assertEquals(0f, clampAppVolume(Float.NEGATIVE_INFINITY), 0.001f)
-    }
-
-    @Test
-    fun clampAppVolume_aboveOne_clampsToOne() {
-        assertEquals(1f, clampAppVolume(2f), 0.001f)
-        assertEquals(1f, clampAppVolume(1.5f), 0.001f)
-        assertEquals(1f, clampAppVolume(Float.POSITIVE_INFINITY), 0.001f)
-    }
-
+fun String.toColorDrawable(): ColorDrawable {
+    return ColorDrawable(this.toAndroidColor())
 }
