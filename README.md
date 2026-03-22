@@ -16,7 +16,7 @@
 
   ---
 
-  [📦 Installation](#-installation) • [📋 Examples](#-examples) • [🙏 Support](#-support--community)
+  [📦 Installation](#-installation) • [📋 Examples](#-examples) • [🙏 Support](#-support)
 
 </div>
 
