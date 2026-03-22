@@ -97,8 +97,7 @@ func _on_load_app_open_pressed() -> void:
 	var unit_id : String
 	if OS.get_name() == "Android":
 		unit_id = "ca-app-pub-3940256099942544/9257395921"
-	elif OS.get_name() == "iOS":
-		unit_id = "ca-app-pub-3940256099942544/5662855259"
+		unit_id = "ca-app-pub-3940256099942544/5575463023"
 	
 	AppOpenAdLoader.new().load(unit_id, AdRequest.new(), app_open_ad_load_callback)
 
@@ -141,7 +140,7 @@ private void OnLoadAppOpenPressed()
 	}
 	else if (OS.GetName() == "iOS")
 	{
-		unitId = "ca-app-pub-3940256099942544/5662855259";
+		unitId = "ca-app-pub-3940256099942544/5575463023";
 	}
 	
 	new AppOpenAdLoader().Load(unitId, new AdRequest(), new AppOpenAdLoadCallback

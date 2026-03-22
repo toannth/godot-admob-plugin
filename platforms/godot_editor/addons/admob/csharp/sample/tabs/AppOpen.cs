@@ -69,10 +69,15 @@ namespace PoingStudios.AdMob.Sample
             _destroyButton.Disabled = !isLoaded;
         }
 
+        private const string AdUnitIdAndroid = "ca-app-pub-3940256099942544/9257395921";
+        private const string AdUnitIdIos = "ca-app-pub-3940256099942544/5575463023";
+
+        private string AdUnitId => OS.GetName() == "iOS" ? AdUnitIdIos : AdUnitIdAndroid;
+
         private void _on_load_pressed()
         {
             Log("Loading app open ad...");
-            new AppOpenAdLoader().Load("ca-app-pub-3940256099942544/9257395921", new AdRequest(), _loadCallback);
+            new AppOpenAdLoader().Load(AdUnitId, new AdRequest(), _loadCallback);
         }
 
         private void _on_show_pressed()

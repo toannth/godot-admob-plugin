@@ -69,7 +69,7 @@ Create a new class (e.g., `AppOpenAdManager`) to load the ad. This class control
             if OS.get_name() == "Android":
                 return "ca-app-pub-3940256099942544/9257395921"
             elif OS.get_name() == "iOS":
-                return "ca-app-pub-3940256099942544/5662855259"
+                return "ca-app-pub-3940256099942544/5575463023"
             return "unused"
 
     func is_ad_available() -> bool:
@@ -105,7 +105,7 @@ Create a new class (e.g., `AppOpenAdManager`) to load the ad. This class control
                 if (OS.GetName() == "Android")
                     return "ca-app-pub-3940256099942544/9257395921";
                 if (OS.GetName() == "iOS")
-                    return "ca-app-pub-3940256099942544/5662855259";
+                    return "ca-app-pub-3940256099942544/5575463023";
                 return "unused";
             }
         }

@@ -56,7 +56,8 @@ func _update_ui_state(is_loaded: bool) -> void:
 
 func _on_load_pressed() -> void:
 	_log("Loading app open ad...")
-	AppOpenAdLoader.new().load("ca-app-pub-3940256099942544/9257395921", AdRequest.new(), _load_callback)
+	var unit_id := "ca-app-pub-3940256099942544/9257395921" if OS.get_name() == "Android" else "ca-app-pub-3940256099942544/5575463023"
+	AppOpenAdLoader.new().load(unit_id, AdRequest.new(), _load_callback)
 
 func _on_show_pressed() -> void:
 	if _app_open_ad:
