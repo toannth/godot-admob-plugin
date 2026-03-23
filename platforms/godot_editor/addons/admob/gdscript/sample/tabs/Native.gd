@@ -37,8 +37,56 @@ var _is_hidden := false
 @onready var _x_value: LineEdit = %XValue
 @onready var _y_value: LineEdit = %YValue
 
+@onready var _template_type: OptionButton = %TemplateType
+@onready var _main_bg_button: Button = %MainBGButton
+@onready var _cta_bg_button: Button = %CTABGButton
+@onready var _cta_text_button: Button = %CTATextButton
+
+var _main_bg_color := Color(1, 1, 1, 1)
+var _cta_bg_color := Color(0.258824, 0.521569, 0.956863, 1)
+var _cta_text_color := Color(1, 1, 1, 1)
+
 func _ready() -> void:
+	_main_bg_button.pressed.connect(_on_main_bg_button_pressed)
+	_cta_bg_button.pressed.connect(_on_cta_bg_button_pressed)
+	_cta_text_button.pressed.connect(_on_cta_text_button_pressed)
 	_update_ui_state(false)
+
+func _update_button_color(button: Button, color: Color) -> void:
+	for state: String in ["normal", "hover", "pressed"]:
+		var style: StyleBoxFlat = button.get_theme_stylebox(state).duplicate()
+		style.bg_color = color
+		button.add_theme_stylebox_override(state, style)
+
+func _show_color_popup(current_color: Color, callback: Callable) -> void:
+	var popup := PopupPanel.new()
+	var picker := ColorPicker.new()
+	picker.color = current_color
+	picker.edit_alpha = false
+	picker.custom_minimum_size = Vector2(300, 400)
+	popup.add_child(picker)
+	add_child(popup)
+	popup.popup_centered()
+	picker.color_changed.connect(callback)
+	popup.popup_hide.connect(popup.queue_free)
+
+func _on_main_bg_button_pressed() -> void:
+	_show_color_popup(_main_bg_color, func(color: Color) -> void:
+		_main_bg_color = color
+		_update_button_color(_main_bg_button, color)
+	)
+
+func _on_cta_bg_button_pressed() -> void:
+	_show_color_popup(_cta_bg_color, func(color: Color) -> void:
+		_cta_bg_color = color
+		_update_button_color(_cta_bg_button, color)
+	)
+
+func _on_cta_text_button_pressed() -> void:
+	_show_color_popup(_cta_text_color, func(color: Color) -> void:
+		_cta_text_color = color
+		_update_button_color(_cta_text_button, color)
+	)
 
 func _update_ui_state(is_loaded: bool) -> void:
 	_load_button.disabled = is_loaded
@@ -61,10 +109,14 @@ func _load_native(hide_immediately: bool = false) -> void:
 	
 	_is_hidden = hide_immediately
 	
+	var options := NativeAdOptions.new()
+	options.ad_choices_placement = AdChoicesPlacement.Values.TOP_RIGHT
+	options.media_aspect_ratio = NativeMediaAspectRatio.Values.ANY
+	
 	NativeOverlayAd.load(
 		_get_ad_unit_id(), 
 		AdRequest.new(), 
-		NativeAdOptions.new(), 
+		options, 
 		_on_ad_load_finished
 	)
 
@@ -83,7 +135,16 @@ func _on_ad_load_finished(ad: NativeOverlayAd, error: LoadAdError) -> void:
 	_native_overlay_ad.ad_listener.on_ad_opened = _on_ad_opened
 	
 	var style := NativeTemplateStyle.new()
-	style.template_id = "medium"
+	style.template_id = NativeTemplateStyle.SMALL if _template_type.selected == 0 else NativeTemplateStyle.MEDIUM
+	style.main_background_color = _main_bg_color
+	
+	var cta_style := NativeTemplateTextStyle.new()
+	cta_style.background_color = _cta_bg_color
+	cta_style.text_color = _cta_text_color
+	cta_style.font_size = 15 # Default
+	cta_style.style = NativeTemplateFontStyle.Values.BOLD
+	
+	style.call_to_action_text = cta_style
 	
 	_native_overlay_ad.render_template(style, _ad_position)
 	

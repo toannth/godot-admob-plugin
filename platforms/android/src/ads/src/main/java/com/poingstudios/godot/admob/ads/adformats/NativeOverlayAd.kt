@@ -32,10 +32,13 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
+import com.google.android.gms.ads.VideoOptions
 import com.poingstudios.godot.admob.ads.converters.convertToGodotDictionary
 import com.poingstudios.godot.admob.ads.converters.convertToNativeTemplateStyle
 import com.poingstudios.godot.admob.ads.nativetemplates.TemplateView
 import com.poingstudios.godot.admob.core.utils.Logger
+import com.poingstudios.godot.admob.core.utils.getBool
+import com.poingstudios.godot.admob.core.utils.getDictionary
 import com.poingstudios.godot.admob.core.utils.getInt
 import org.godotengine.godot.Dictionary
 import org.godotengine.godot.Godot
@@ -54,6 +57,7 @@ class NativeOverlayAd(
     private var mTemplateView: TemplateView? = null
     private var isHidden: Boolean = false
     private var mPosition: Position = Position(null, 0, 0)
+    private var mAdSize: com.google.android.gms.ads.AdSize? = null
     private var safeArea: Rect = getSafeArea()
 
     object SignalInfos {
@@ -90,8 +94,16 @@ class NativeOverlayAd(
             }
             val adChoicesPlacement = optionsDict.getInt("ad_choices_placement")
             optionsBuilder.setAdChoicesPlacement(adChoicesPlacement)
-            builder.withNativeAdOptions(optionsBuilder.build())
 
+            val videoOptionsDict = optionsDict.getDictionary("video_options")
+            val videoOptions = VideoOptions.Builder()
+                    .setStartMuted(videoOptionsDict.getBool("start_muted", true))
+                    .setCustomControlsRequested(videoOptionsDict.getBool("custom_controls_requested", false))
+                    .setClickToExpandRequested(videoOptionsDict.getBool("click_to_expand_requested", false))
+                    .build()
+            optionsBuilder.setVideoOptions(videoOptions)
+
+            builder.withNativeAdOptions(optionsBuilder.build())
             builder.forNativeAd { nativeAd ->
                 if (mNativeAd != null) {
                     mNativeAd?.destroy()
@@ -138,13 +150,23 @@ class NativeOverlayAd(
         }
     }
 
-    fun renderTemplate(styleDict: Dictionary, position: Int) {
+    fun renderTemplate(styleDict: Dictionary, position: Int, adSizeDict: Dictionary?) {
         mPosition = Position(position, 0, 0)
+        mAdSize = if (adSizeDict != null && !adSizeDict.isEmpty()) {
+            com.google.android.gms.ads.AdSize(adSizeDict.getInt("width"), adSizeDict.getInt("height"))
+        } else {
+            null
+        }
         internalRenderTemplate(styleDict)
     }
 
-    fun renderTemplateCustomPosition(styleDict: Dictionary, x: Int, y: Int) {
+    fun renderTemplateCustomPosition(styleDict: Dictionary, x: Int, y: Int, adSizeDict: Dictionary?) {
         mPosition = Position(null, x, y)
+        mAdSize = if (adSizeDict != null && !adSizeDict.isEmpty()) {
+            com.google.android.gms.ads.AdSize(adSizeDict.getInt("width"), adSizeDict.getInt("height"))
+        } else {
+            null
+        }
         internalRenderTemplate(styleDict)
     }
 
@@ -158,25 +180,14 @@ class NativeOverlayAd(
             }
 
             val templateId = styleDict["template_id"] as? String ?: "medium"
-            val layoutResId =
-                    if (templateId == "small") {
-                        activity.resources.getIdentifier(
-                                "small_template_view_layout",
-                                "layout",
-                                activity.packageName
-                        )
-                    } else {
-                        activity.resources.getIdentifier(
-                                "medium_template_view_layout",
-                                "layout",
-                                activity.packageName
-                        )
-                    }
+            val layoutResId = if (templateId == "small") {
+                activity.resources.getIdentifier("small_template_view_layout", "layout", activity.packageName)
+            } else {
+                activity.resources.getIdentifier("medium_template_view_layout", "layout", activity.packageName)
+            }
 
             if (layoutResId == 0) {
-                Logger.error(
-                        "Native Template Layout not found. Check if Native Templates are properly integrated."
-                )
+                Logger.error("Native Template Layout not found. Check if Native Templates are properly integrated.")
                 return@runOnUiThread
             }
 
@@ -227,30 +238,30 @@ class NativeOverlayAd(
     }
 
     private fun getGravity(adPosition: Int?): Int {
-        val gravity =
-                when (adPosition) {
-                    AdPosition.TOP.value -> Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                    AdPosition.BOTTOM.value -> Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-                    AdPosition.LEFT.value -> Gravity.BOTTOM or Gravity.START
-                    AdPosition.RIGHT.value -> Gravity.BOTTOM or Gravity.END
-                    AdPosition.TOP_LEFT.value -> Gravity.TOP or Gravity.START
-                    AdPosition.TOP_RIGHT.value -> Gravity.TOP or Gravity.END
-                    AdPosition.BOTTOM_LEFT.value -> Gravity.BOTTOM or Gravity.START
-                    AdPosition.BOTTOM_RIGHT.value -> Gravity.BOTTOM or Gravity.END
-                    AdPosition.CENTER.value -> Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
-                    null -> Gravity.TOP or Gravity.START
-                    else -> throw IllegalArgumentException("Invalid AdPosition: $adPosition")
-                }
+        val gravity = when (adPosition) {
+            AdPosition.TOP.value -> Gravity.TOP or Gravity.CENTER_HORIZONTAL
+            AdPosition.BOTTOM.value -> Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            AdPosition.LEFT.value -> Gravity.BOTTOM or Gravity.START
+            AdPosition.RIGHT.value -> Gravity.BOTTOM or Gravity.END
+            AdPosition.TOP_LEFT.value -> Gravity.TOP or Gravity.START
+            AdPosition.TOP_RIGHT.value -> Gravity.TOP or Gravity.END
+            AdPosition.BOTTOM_LEFT.value -> Gravity.BOTTOM or Gravity.START
+            AdPosition.BOTTOM_RIGHT.value -> Gravity.BOTTOM or Gravity.END
+            AdPosition.CENTER.value -> Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
+            null -> Gravity.TOP or Gravity.START
+            else -> throw IllegalArgumentException("Invalid AdPosition: $adPosition")
+        }
         return gravity
     }
 
     private fun updatePositionLogic() {
         val view = mTemplateView ?: return
-        val layoutParams =
-                FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.WRAP_CONTENT
-                )
+        val density = activity.resources.displayMetrics.density
+
+        val width = if (mAdSize != null) (mAdSize!!.width * density).toInt() else FrameLayout.LayoutParams.MATCH_PARENT
+        val height = if (mAdSize != null) (mAdSize!!.height * density).toInt() else FrameLayout.LayoutParams.WRAP_CONTENT
+
+        val layoutParams = FrameLayout.LayoutParams(width, height)
 
         layoutParams.gravity = getGravity(mPosition.value)
         val safeArea = getSafeArea()
@@ -261,7 +272,6 @@ class NativeOverlayAd(
         val bottomInset = activity.window.decorView.height - safeArea.bottom
 
         if (mPosition.value == null) {
-            val density = activity.resources.displayMetrics.density
             layoutParams.leftMargin = (mPosition.customX * density).toInt()
             layoutParams.topMargin = (mPosition.customY * density).toInt()
             layoutParams.rightMargin = 0

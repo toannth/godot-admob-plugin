@@ -55,12 +55,16 @@ static func load(ad_unit_id: String, ad_request: AdRequest, options: NativeAdOpt
 		_plugin.load(ad_unit_id, ad_request.convert_to_dictionary(), ad_request.keywords, options.convert_to_dictionary(), uid)
 
 ## Renders the native overlay ad at provided AdPosition.
-func render_template(style: NativeTemplateStyle, ad_position: AdPosition) -> void:
+func render_template(style: NativeTemplateStyle, ad_position: AdPosition, ad_size: AdSize = null) -> void:
 	if _plugin:
+		var ad_size_dict := {} # Initialize as empty dictionary to avoid Nil conversion error in JNI
+		if ad_size:
+			ad_size_dict = {"width": ad_size.width, "height": ad_size.height}
+			
 		if ad_position.value == AdPosition.Values.CUSTOM:
-			_plugin.render_template_custom_position(_uid, style.convert_to_dictionary(), ad_position.offset.x, ad_position.offset.y)
+			_plugin.render_template_custom_position(_uid, style.convert_to_dictionary(), ad_position.offset.x, ad_position.offset.y, ad_size_dict)
 		else:
-			_plugin.render_template(_uid, style.convert_to_dictionary(), ad_position.value)
+			_plugin.render_template(_uid, style.convert_to_dictionary(), ad_position.value, ad_size_dict)
 
 ## Sets the position of the native overlay ad.
 func set_template_position(ad_position: AdPosition) -> void:

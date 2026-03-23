@@ -78,13 +78,13 @@ class PoingGodotAdMobNativeOverlayAd(godot: Godot?) : org.godotengine.godot.plug
     }
 
     @UsedByGodot
-    fun render_template(uid: Int, styleDictionary: Dictionary, position: Int) {
-        nativeAds[uid]?.renderTemplate(styleDictionary, position)
+    fun render_template(uid: Int, styleDictionary: Dictionary, position: Int, adSizeDictionary: Dictionary?) {
+        nativeAds[uid]?.renderTemplate(styleDictionary, position, adSizeDictionary)
     }
 
     @UsedByGodot
-    fun render_template_custom_position(uid: Int, styleDictionary: Dictionary, x: Int, y: Int) {
-        nativeAds[uid]?.renderTemplateCustomPosition(styleDictionary, x, y)
+    fun render_template_custom_position(uid: Int, styleDictionary: Dictionary, x: Int, y: Int, adSizeDictionary: Dictionary?) {
+        nativeAds[uid]?.renderTemplateCustomPosition(styleDictionary, x, y, adSizeDictionary)
     }
 
     @UsedByGodot

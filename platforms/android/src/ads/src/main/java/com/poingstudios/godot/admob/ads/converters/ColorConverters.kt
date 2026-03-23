@@ -23,18 +23,19 @@ package com.poingstudios.godot.admob.ads.converters
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 
 fun String.toAndroidColor(): Int {
     if (this.isEmpty()) return Color.TRANSPARENT
-    var hex = this
-    if (hex.length == 9) { // #rrggbbaa
-        val rr = hex.substring(1, 3)
-        val gg = hex.substring(3, 5)
-        val bb = hex.substring(5, 7)
-        val aa = hex.substring(7, 9)
-        hex = "#$aa$rr$gg$bb"
+    
+    val hex = if (this.startsWith("#")) this else "#$this"
+    
+    return try {
+        Color.parseColor(hex)
+    } catch (e: Exception) {
+        Log.e("PoingAdMob", "Failed to parse color: $hex. Falling back to Transparent.")
+        Color.TRANSPARENT
     }
-    return Color.parseColor(hex)
 }
 
 fun String.toColorDrawable(): ColorDrawable {

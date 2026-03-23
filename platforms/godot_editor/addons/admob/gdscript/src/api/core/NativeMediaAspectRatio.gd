@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-class_name MediaAspectRatio
+class_name NativeMediaAspectRatio
 
 enum Values {
 	UNKNOWN = 0,
