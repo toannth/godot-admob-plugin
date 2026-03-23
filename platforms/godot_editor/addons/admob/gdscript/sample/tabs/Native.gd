@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-extends VBoxContainer
+extends "res://addons/admob/gdscript/sample/tabs/BaseTab.gd"
 
 const Registry = preload("res://addons/admob/internal/sample_registry.gd")
 
@@ -47,6 +47,7 @@ var _cta_bg_color := Color(0.258824, 0.521569, 0.956863, 1)
 var _cta_text_color := Color(1, 1, 1, 1)
 
 func _ready() -> void:
+	super()
 	_main_bg_button.pressed.connect(_on_main_bg_button_pressed)
 	_cta_bg_button.pressed.connect(_on_cta_bg_button_pressed)
 	_cta_text_button.pressed.connect(_on_cta_text_button_pressed)

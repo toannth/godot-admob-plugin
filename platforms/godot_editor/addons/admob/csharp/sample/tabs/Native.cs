@@ -1,13 +1,11 @@
-// MIT License
-// Copyright (c) 2023-present Poing Studios
-
+using System;
 using Godot;
 using PoingStudios.AdMob.Api;
 using PoingStudios.AdMob.Api.Core;
 
 namespace PoingStudios.AdMob.Sample
 {
-    public partial class Native : VBoxContainer
+    public partial class Native : BaseTab
     {
         private NativeOverlayAd _nativeOverlayAd;
         private AdPosition _adPosition = AdPosition.Top;
@@ -23,12 +21,18 @@ namespace PoingStudios.AdMob.Sample
         private LineEdit _yValue;
 
         private OptionButton _templateType;
-        private ColorPickerButton _mainBgColor;
-        private ColorPickerButton _ctaBgColor;
-        private ColorPickerButton _ctaTextColor;
+        private Button _mainBgButton;
+        private Button _ctaBgButton;
+        private Button _ctaTextButton;
+
+        private Color _mainBgColor = new Color(1, 1, 1, 1);
+        private Color _ctaBgColor = new Color(0.258824f, 0.521569f, 0.956863f, 1);
+        private Color _ctaTextColor = new Color(1, 1, 1, 1);
 
         public override void _Ready()
         {
+            base._Ready();
+
             _loadButton = GetNode<Button>("%LoadNative");
             _loadBackgroundButton = GetNode<Button>("%LoadNativeBackground");
             _destroyButton = GetNode<Button>("%DestroyNative");
@@ -39,11 +43,67 @@ namespace PoingStudios.AdMob.Sample
             _yValue = GetNode<LineEdit>("%YValue");
 
             _templateType = GetNode<OptionButton>("%TemplateType");
-            _mainBgColor = GetNode<ColorPickerButton>("%MainBGColor");
-            _ctaBgColor = GetNode<ColorPickerButton>("%CTABGColor");
-            _ctaTextColor = GetNode<ColorPickerButton>("%CTATextColor");
+            _mainBgButton = GetNode<Button>("%MainBGButton");
+            _ctaBgButton = GetNode<Button>("%CTABGButton");
+            _ctaTextButton = GetNode<Button>("%CTATextButton");
+
+            _mainBgButton.Pressed += OnMainBgButtonPressed;
+            _ctaBgButton.Pressed += OnCtaBgButtonPressed;
+            _ctaTextButton.Pressed += OnCtaTextButtonPressed;
 
             UpdateUiState(false);
+        }
+
+        private void UpdateButtonColor(Button button, Color color)
+        {
+            string[] states = { "normal", "hover", "pressed" };
+            foreach (var state in states)
+            {
+                var style = (StyleBoxFlat)button.GetThemeStylebox(state).Duplicate();
+                style.BgColor = color;
+                button.AddThemeStyleboxOverride(state, style);
+            }
+        }
+
+        private void ShowColorPopup(Color currentColor, Action<Color> callback)
+        {
+            var popup = new PopupPanel();
+            var picker = new ColorPicker();
+            picker.Color = currentColor;
+            picker.EditAlpha = false;
+            picker.CustomMinimumSize = new Vector2(300, 400);
+            popup.AddChild(picker);
+            AddChild(popup);
+            popup.PopupCentered();
+            picker.ColorChanged += (color) => callback(color);
+            popup.PopupHide += () => popup.QueueFree();
+        }
+
+        private void OnMainBgButtonPressed()
+        {
+            ShowColorPopup(_mainBgColor, (color) =>
+            {
+                _mainBgColor = color;
+                UpdateButtonColor(_mainBgButton, color);
+            });
+        }
+
+        private void OnCtaBgButtonPressed()
+        {
+            ShowColorPopup(_ctaBgColor, (color) =>
+            {
+                _ctaBgColor = color;
+                UpdateButtonColor(_ctaBgButton, color);
+            });
+        }
+
+        private void OnCtaTextButtonPressed()
+        {
+            ShowColorPopup(_ctaTextColor, (color) =>
+            {
+                _ctaTextColor = color;
+                UpdateButtonColor(_ctaTextButton, color);
+            });
         }
 
         private void UpdateUiState(bool isLoaded)
@@ -103,11 +163,11 @@ namespace PoingStudios.AdMob.Sample
             var style = new NativeTemplateStyle
             {
                 TemplateId = _templateType.Selected == 0 ? NativeTemplateStyle.Small : NativeTemplateStyle.Medium,
-                MainBackgroundColor = _mainBgColor.Color,
+                MainBackgroundColor = _mainBgColor,
                 CallToActionText = new NativeTemplateTextStyle
                 {
-                    BackgroundColor = _ctaBgColor.Color,
-                    TextColor = _ctaTextColor.Color,
+                    BackgroundColor = _ctaBgColor,
+                    TextColor = _ctaTextColor,
                     FontSize = 15,
                     Style = NativeTemplateFontStyle.Bold
                 }
