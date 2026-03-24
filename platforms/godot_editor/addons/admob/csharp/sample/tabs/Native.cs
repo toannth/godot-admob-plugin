@@ -159,6 +159,8 @@ namespace PoingStudios.AdMob.Sample
             _nativeOverlayAd.AdListener.OnAdClosed = () => Log("Ad closed");
             _nativeOverlayAd.AdListener.OnAdImpression = () => Log("Ad impression recorded");
             _nativeOverlayAd.AdListener.OnAdOpened = () => Log("Ad opened");
+            _nativeOverlayAd.OnAdPaid = adValue =>
+                Log(string.Format("Ad paid: {0:F} {1} (precision: {2})", adValue.ValueMicros / 1000000.0, adValue.CurrencyCode, adValue.PrecisionType));
 
             var style = new NativeTemplateStyle
             {

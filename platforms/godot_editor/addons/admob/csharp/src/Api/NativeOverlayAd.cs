@@ -19,6 +19,7 @@ namespace PoingStudios.AdMob.Api
         private static readonly HashSet<NativeOverlayAd> _activeAds = new HashSet<NativeOverlayAd>();
 
         public AdListener AdListener { get; set; } = new AdListener();
+        public Action<AdValue> OnAdPaid { get; set; }
         private readonly int _uid;
         private Action<NativeOverlayAd, LoadAdError> _adLoadCallback;
 
@@ -28,6 +29,7 @@ namespace PoingStudios.AdMob.Api
         private readonly Callable _onAdOpenedCallable;
         private readonly Callable _onAdLoadedCallable;
         private readonly Callable _onAdFailedToLoadCallable;
+        private readonly Callable _onAdPaidCallable;
 
         private NativeOverlayAd(int uid)
         {
@@ -39,6 +41,7 @@ namespace PoingStudios.AdMob.Api
             _onAdOpenedCallable = Callable.From<int>(OnAdOpened);
             _onAdLoadedCallable = Callable.From<int>(InternalOnAdLoaded);
             _onAdFailedToLoadCallable = Callable.From<int, Dictionary>(InternalOnAdFailedToLoad);
+            _onAdPaidCallable = Callable.From<int, Dictionary>(InternalOnAdPaid);
 
             if (_plugin != null)
             {
@@ -46,6 +49,7 @@ namespace PoingStudios.AdMob.Api
                 SafeConnect(_plugin, "on_native_overlay_ad_closed", _onAdClosedCallable);
                 SafeConnect(_plugin, "on_native_overlay_ad_impression", _onAdImpressionCallable);
                 SafeConnect(_plugin, "on_native_overlay_ad_opened", _onAdOpenedCallable);
+                SafeConnect(_plugin, "on_native_overlay_ad_paid", _onAdPaidCallable);
             }
         }
 
@@ -173,6 +177,13 @@ namespace PoingStudios.AdMob.Api
         {
             if (uid != _uid) return;
             Callable.From(() => AdListener.OnAdOpened?.Invoke()).CallDeferred();
+        }
+
+        private void InternalOnAdPaid(int uid, Dictionary adValueDictionary)
+        {
+            if (uid != _uid) return;
+            var adValue = AdValue.Create(adValueDictionary);
+            Callable.From(() => OnAdPaid?.Invoke(adValue)).CallDeferred();
         }
     }
 }

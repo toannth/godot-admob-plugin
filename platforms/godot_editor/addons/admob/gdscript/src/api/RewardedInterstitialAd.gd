@@ -25,6 +25,7 @@ extends MobileSingletonPlugin
 
 static var _plugin = _get_plugin("PoingGodotAdMobRewardedInterstitialAd")
 var full_screen_content_callback := FullScreenContentCallback.new()
+var on_ad_paid: Callable = func(_ad_value: AdValue): pass
 
 var _uid: int
 
@@ -55,6 +56,7 @@ func register_callbacks() -> void:
 		safe_connect(_plugin, "on_rewarded_interstitial_ad_failed_to_show_full_screen_content", _on_rewarded_interstitial_ad_failed_to_show_full_screen_content)
 		safe_connect(_plugin, "on_rewarded_interstitial_ad_impression", _on_rewarded_interstitial_ad_impression)
 		safe_connect(_plugin, "on_rewarded_interstitial_ad_showed_full_screen_content", _on_rewarded_interstitial_ad_showed_full_screen_content)
+		safe_connect(_plugin, "on_rewarded_interstitial_ad_paid", _on_rewarded_interstitial_ad_paid)
 
 func _on_rewarded_interstitial_ad_user_earned_reward(uid: int, rewarded_item_dictionary: Dictionary) -> void:
 	if uid == _uid:
@@ -79,3 +81,7 @@ func _on_rewarded_interstitial_ad_impression(uid: int) -> void:
 func _on_rewarded_interstitial_ad_showed_full_screen_content(uid: int) -> void:
 	if uid == _uid:
 		full_screen_content_callback.on_ad_showed_full_screen_content.call_deferred()
+
+func _on_rewarded_interstitial_ad_paid(uid: int, ad_value_dictionary: Dictionary) -> void:
+	if uid == _uid:
+		on_ad_paid.call_deferred(AdValue.create(ad_value_dictionary))

@@ -33,6 +33,7 @@ namespace PoingStudios.AdMob.Api
         private static readonly GodotObject _plugin = GetPlugin("PoingGodotAdMobRewardedInterstitialAd");
 
         public FullScreenContentCallback FullScreenContentCallback { get; set; } = new FullScreenContentCallback();
+        public Action<AdValue> OnAdPaid { get; set; }
 
         private readonly int _uid;
         private OnUserEarnedRewardListener _rewardListener;
@@ -43,6 +44,7 @@ namespace PoingStudios.AdMob.Api
         private readonly Callable _onImpressionCallable;
         private readonly Callable _onShowedCallable;
         private readonly Callable _onRewardCallable;
+        private readonly Callable _onPaidCallable;
 
         internal RewardedInterstitialAd(int uid)
         {
@@ -54,6 +56,7 @@ namespace PoingStudios.AdMob.Api
             _onImpressionCallable = Callable.From<int>(OnImpression);
             _onShowedCallable = Callable.From<int>(OnShowed);
             _onRewardCallable = Callable.From<int, Dictionary>(OnReward);
+            _onPaidCallable = Callable.From<int, Dictionary>(OnPaid);
 
             RegisterCallbacks();
         }
@@ -85,6 +88,7 @@ namespace PoingStudios.AdMob.Api
             SafeConnect(_plugin, "on_rewarded_interstitial_ad_failed_to_show_full_screen_content", _onFailedToShowCallable);
             SafeConnect(_plugin, "on_rewarded_interstitial_ad_impression", _onImpressionCallable);
             SafeConnect(_plugin, "on_rewarded_interstitial_ad_showed_full_screen_content", _onShowedCallable);
+            SafeConnect(_plugin, "on_rewarded_interstitial_ad_paid", _onPaidCallable);
         }
 
         private void OnReward(int uid, Dictionary rewardDict)
@@ -123,6 +127,13 @@ namespace PoingStudios.AdMob.Api
         {
             if (uid != _uid) return;
             Callable.From(() => FullScreenContentCallback.OnAdShowedFullScreenContent?.Invoke()).CallDeferred();
+        }
+
+        private void OnPaid(int uid, Dictionary adValueDictionary)
+        {
+            if (uid != _uid) return;
+            var adValue = AdValue.Create(adValueDictionary);
+            Callable.From(() => OnAdPaid?.Invoke(adValue)).CallDeferred();
         }
     }
 }

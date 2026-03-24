@@ -69,6 +69,8 @@ public partial class Interstitial : BaseTab
 			{
 				Log("Ad loaded successfully");
 				_interstitialAd = ad;
+				_interstitialAd.OnAdPaid = adValue =>
+					Log(string.Format("Ad paid: {0:F} {1} (precision: {2})", adValue.ValueMicros / 1000000.0, adValue.CurrencyCode, adValue.PrecisionType));
 				_interstitialAd.FullScreenContentCallback = new FullScreenContentCallback
 				{
 					OnAdShowedFullScreenContent = () => Log("Ad showed"),

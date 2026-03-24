@@ -88,6 +88,8 @@ func _on_ad_failed_to_load(error: LoadAdError) -> void:
 func _on_ad_loaded(ad: RewardedInterstitialAd) -> void:
 	_log("Ad loaded successfully (UID: %s)" % str(ad._uid))
 	ad.full_screen_content_callback = _content_callback
+	ad.on_ad_paid = func(ad_value: AdValue) -> void:
+		_log("Ad paid: %f %s (precision: %d)" % [ad_value.value_micros / 1000000.0, ad_value.currency_code, ad_value.precision_type])
 	
 	var ssv_options := ServerSideVerificationOptions.new()
 	ssv_options.custom_data = "TEST_DATA"

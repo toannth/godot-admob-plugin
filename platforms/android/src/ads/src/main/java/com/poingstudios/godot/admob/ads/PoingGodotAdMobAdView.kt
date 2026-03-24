@@ -58,6 +58,7 @@ class PoingGodotAdMobAdView(godot: Godot?) : org.godotengine.godot.plugin.GodotP
         signals.add(Banner.SignalInfos.onAdImpression)
         signals.add(Banner.SignalInfos.onAdLoaded)
         signals.add(Banner.SignalInfos.onAdOpened)
+        signals.add(Banner.SignalInfos.onAdPaid)
         return signals
     }
 

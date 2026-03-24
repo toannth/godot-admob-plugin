@@ -72,6 +72,7 @@ class NativeOverlayAd(
         val onAdClosed = SignalInfo("on_native_overlay_ad_closed", Integer::class.java)
         val onAdImpression = SignalInfo("on_native_overlay_ad_impression", Integer::class.java)
         val onAdOpened = SignalInfo("on_native_overlay_ad_opened", Integer::class.java)
+        val onAdPaid = SignalInfo("on_native_overlay_ad_paid", Integer::class.java, Dictionary::class.java)
     }
 
     private val mLayoutChangeListener = OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
@@ -109,6 +110,13 @@ class NativeOverlayAd(
                     mNativeAd?.destroy()
                 }
                 mNativeAd = nativeAd
+                nativeAd.setOnPaidEventListener { adValue ->
+                    val adValueDictionary = Dictionary()
+                    adValueDictionary["value_micros"] = adValue.valueMicros
+                    adValueDictionary["currency_code"] = adValue.currencyCode
+                    adValueDictionary["precision_type"] = adValue.precisionType
+                    emitSignal(godot, pluginName, SignalInfos.onAdPaid, uid, adValueDictionary)
+                }
             }
 
             builder.withAdListener(

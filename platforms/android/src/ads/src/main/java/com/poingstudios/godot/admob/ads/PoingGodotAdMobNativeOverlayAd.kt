@@ -58,6 +58,7 @@ class PoingGodotAdMobNativeOverlayAd(godot: Godot?) : org.godotengine.godot.plug
         signals.add(NativeOverlayAd.SignalInfos.onAdClosed)
         signals.add(NativeOverlayAd.SignalInfos.onAdImpression)
         signals.add(NativeOverlayAd.SignalInfos.onAdOpened)
+        signals.add(NativeOverlayAd.SignalInfos.onAdPaid)
         return signals
     }
 

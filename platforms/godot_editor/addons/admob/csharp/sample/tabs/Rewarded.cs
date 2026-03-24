@@ -69,6 +69,8 @@ public partial class Rewarded : BaseTab
 			{
 				Log("Ad loaded successfully");
 				_rewardedAd = ad;
+				_rewardedAd.OnAdPaid = adValue =>
+					Log(string.Format("Ad paid: {0:F} {1} (precision: {2})", adValue.ValueMicros / 1000000.0, adValue.CurrencyCode, adValue.PrecisionType));
 				_rewardedAd.FullScreenContentCallback = new FullScreenContentCallback
 				{
 					OnAdShowedFullScreenContent = () => Log("Ad showed"),

@@ -70,6 +70,8 @@ func _load_banner(hide_immediately: bool = false) -> void:
 	var ad_size := AdSize.get_current_orientation_anchored_adaptive_banner_ad_size(AdSize.FULL_WIDTH)
 	_ad_view = AdView.new(_get_ad_unit_id(), ad_size, _ad_position)
 	_ad_view.ad_listener = _ad_listener
+	_ad_view.on_ad_paid = func(ad_value: AdValue) -> void:
+		_log("Ad paid: %f %s (precision: %d)" % [ad_value.value_micros / 1000000.0, ad_value.currency_code, ad_value.precision_type])
 	
 	_is_hidden = hide_immediately
 	if _is_hidden:
