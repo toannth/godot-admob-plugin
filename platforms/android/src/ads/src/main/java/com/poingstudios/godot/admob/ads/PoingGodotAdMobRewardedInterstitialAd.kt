@@ -91,11 +91,7 @@ class PoingGodotAdMobRewardedInterstitialAd(godot: Godot?) : org.godotengine.god
                     override fun onAdLoaded(rewardedInterstitialAd: RewardedInterstitialAd) {
                         rewardedInterstitialAds[uid] = rewardedInterstitialAd
                         rewardedInterstitialAd.setOnPaidEventListener { adValue ->
-                            val adValueDictionary = Dictionary()
-                            adValueDictionary["value_micros"] = adValue.valueMicros
-                            adValueDictionary["currency_code"] = adValue.currencyCode
-                            adValueDictionary["precision_type"] = adValue.precisionType
-                            emitSignal("on_rewarded_interstitial_ad_paid", uid, adValueDictionary)
+                            emitSignal("on_rewarded_interstitial_ad_paid", uid, adValue.convertToGodotDictionary())
                         }
                         rewardedInterstitialAd.fullScreenContentCallback = object: FullScreenContentCallback() {
                             override fun onAdClicked() {

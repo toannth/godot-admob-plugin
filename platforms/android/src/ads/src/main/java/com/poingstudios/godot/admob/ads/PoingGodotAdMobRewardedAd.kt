@@ -91,11 +91,7 @@ class PoingGodotAdMobRewardedAd(godot: Godot?) : org.godotengine.godot.plugin.Go
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
                         rewardedAds[uid] = rewardedAd
                         rewardedAd.setOnPaidEventListener { adValue ->
-                            val adValueDictionary = Dictionary()
-                            adValueDictionary["value_micros"] = adValue.valueMicros
-                            adValueDictionary["currency_code"] = adValue.currencyCode
-                            adValueDictionary["precision_type"] = adValue.precisionType
-                            emitSignal("on_rewarded_ad_paid", uid, adValueDictionary)
+                            emitSignal("on_rewarded_ad_paid", uid, adValue.convertToGodotDictionary())
                         }
                         rewardedAd.fullScreenContentCallback = object: FullScreenContentCallback() {
                             override fun onAdClicked() {

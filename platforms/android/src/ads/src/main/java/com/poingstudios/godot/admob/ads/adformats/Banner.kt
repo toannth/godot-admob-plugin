@@ -130,11 +130,7 @@ class Banner(
                     }
 
             mAdView.setOnPaidEventListener { adValue ->
-                val adValueDictionary = Dictionary()
-                adValueDictionary["value_micros"] = adValue.valueMicros
-                adValueDictionary["currency_code"] = adValue.currencyCode
-                adValueDictionary["precision_type"] = adValue.precisionType
-                emitSignal(godot, pluginName, SignalInfos.onAdPaid, uid, adValueDictionary)
+                emitSignal(godot, pluginName, SignalInfos.onAdPaid, uid, adValue.convertToGodotDictionary())
             }
 
             godotLayout.addView(mAdView)
