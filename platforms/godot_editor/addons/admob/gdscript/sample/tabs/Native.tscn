@@ -191,7 +191,7 @@ text = "Template:"
 [node name="TemplateType" type="OptionButton" parent="StyleCard/VBox/TemplateGrid"]
 unique_name_in_owner = true
 layout_mode = 2
-selected = 1
+selected = 0
 item_count = 2
 popup/item_0/text = "Small"
 popup/item_0/id = 0

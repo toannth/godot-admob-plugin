@@ -183,8 +183,8 @@ static NSString *_Nonnull const GADTBlue = @"#5C84F0";
 - (void)styleAdBadge {
   UILabel *adBadge = self.adBadge;
   adBadge.layer.borderColor = adBadge.textColor.CGColor;
-  adBadge.layer.borderWidth = 1.0;
-  adBadge.layer.cornerRadius = 3.0;
+  adBadge.layer.borderWidth = 1.5;
+  adBadge.layer.cornerRadius = 5.0;
 }
 
 - (void)setStyles:(nullable NSDictionary<GADTNativeTemplateStyleKey, NSObject *> *)styles {
@@ -226,24 +226,27 @@ static NSString *_Nonnull const GADTBlue = @"#5C84F0";
   // otherwise, starRatingView is hidden and bodyView is filled.
   // Use the unicode characters for filled in or empty stars.
   if (nativeAd.starRating.floatValue > 0) {
-    NSMutableString* stars = [[NSMutableString alloc] initWithString:@""];
+    NSMutableAttributedString* stars = [[NSMutableAttributedString alloc] initWithString:@""];
+    UIColor *gold = [UIColor colorWithRed:1.000 green:0.757 blue:0.027 alpha:1.000];
+    UIColor *gray = [UIColor colorWithRed:0.75 green:0.75 blue:0.75 alpha:1.0];
+    
     int count = 0;
     for (; count < nativeAd.starRating.intValue; count++) {
       NSString* filledStar = [NSString stringWithUTF8String:"\u2605"];
-      [stars appendString:filledStar];
+      [stars appendAttributedString:[[NSAttributedString alloc] initWithString:filledStar attributes:@{NSForegroundColorAttributeName: gold}]];
     }
     for (; count < 5; count++) {
-      NSString* emptyStar = [NSString stringWithUTF8String:"\u2606"];
-      [stars appendString:emptyStar];
+      NSString* emptyStar = [NSString stringWithUTF8String:"\u2605"]; // Use filled star with light gray
+      [stars appendAttributedString:[[NSAttributedString alloc] initWithString:emptyStar attributes:@{NSForegroundColorAttributeName: gray}]];
     }
-    ((UILabel *)self.starRatingView).text = stars;
-    self.bodyView.hidden = YES;
+    ((UILabel *)self.starRatingView).attributedText = stars;
     self.starRatingView.hidden = NO;
   } else {
     self.starRatingView.hidden = YES;
-    ((UILabel *)self.bodyView).text = nativeAd.body;
-    self.bodyView.hidden = NO;
   }
+
+  ((UILabel *)self.bodyView).text = nativeAd.body;
+  self.bodyView.hidden = nativeAd.body ? NO : YES;
 
   [self.mediaView setMediaContent:nativeAd.mediaContent];
   [super setNativeAd:nativeAd];
