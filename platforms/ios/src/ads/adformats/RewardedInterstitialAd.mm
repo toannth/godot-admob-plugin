@@ -45,6 +45,16 @@
         self.rewarded = ad;
         self.rewarded.fullScreenContentDelegate = self;
         
+        __weak RewardedInterstitialAd *weakSelf = self;
+        self.rewarded.paidEventHandler = ^(GADAdValue *_Nonnull value) {
+            RewardedInterstitialAd *strongSelf = weakSelf;
+            if (strongSelf) {
+                PoingGodotAdMobRewardedInterstitialAd::get_singleton()->emit_signal("on_rewarded_interstitial_ad_paid",
+                                                                             [strongSelf.UID intValue],
+                                                                             [ObjectToGodotDictionary convertGADAdValueToDictionary:value]);
+            }
+        };
+        
         PoingGodotAdMobRewardedInterstitialAd::get_singleton()->objectVector.at([self.UID intValue]) = self;
         NSLog(@"success to load RewardedInterstitialAd");
         PoingGodotAdMobRewardedInterstitialAd::get_singleton()->emit_signal("on_rewarded_interstitial_ad_loaded", [self.UID intValue]);

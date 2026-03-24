@@ -88,4 +88,5 @@ void PoingGodotAdMobInterstitialAd::_bind_methods() {
     ADD_SIGNAL(MethodInfo("on_interstitial_ad_failed_to_show_full_screen_content",  PropertyInfo(Variant::INT, "UID"), PropertyInfo(Variant::DICTIONARY, "adErrorDictionary")));
     ADD_SIGNAL(MethodInfo("on_interstitial_ad_impression",                          PropertyInfo(Variant::INT, "UID")));
     ADD_SIGNAL(MethodInfo("on_interstitial_ad_showed_full_screen_content",          PropertyInfo(Variant::INT, "UID")));
+    ADD_SIGNAL(MethodInfo("on_interstitial_ad_paid",                                PropertyInfo(Variant::INT, "UID"), PropertyInfo(Variant::DICTIONARY, "adValueDictionary")));
 };

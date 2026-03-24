@@ -45,6 +45,16 @@
         self.rewarded = ad;
         self.rewarded.fullScreenContentDelegate = self;
         
+        __weak RewardedAd *weakSelf = self;
+        self.rewarded.paidEventHandler = ^(GADAdValue *_Nonnull value) {
+            RewardedAd *strongSelf = weakSelf;
+            if (strongSelf) {
+                PoingGodotAdMobRewardedAd::get_singleton()->emit_signal("on_rewarded_ad_paid",
+                                                                             [strongSelf.UID intValue],
+                                                                             [ObjectToGodotDictionary convertGADAdValueToDictionary:value]);
+            }
+        };
+        
         PoingGodotAdMobRewardedAd::get_singleton()->objectVector.at([self.UID intValue]) = self;
         NSLog(@"success to load RewardedAd");
         PoingGodotAdMobRewardedAd::get_singleton()->emit_signal("on_rewarded_ad_loaded", [self.UID intValue]);
@@ -74,7 +84,7 @@
 
 - (void)adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
     NSLog(@"RewardedAd adDidRecordImpression.");
-    PoingGodotAdMobRewardedAd::get_singleton()->emit_signal("on_rewarded_ad_mpression", [self.UID intValue]);
+    PoingGodotAdMobRewardedAd::get_singleton()->emit_signal("on_rewarded_ad_impression", [self.UID intValue]);
 }
 - (void)adDidRecordClick:(nonnull id<GADFullScreenPresentingAd>)ad{
     NSLog(@"RewardedAd adDidRecordClick.");

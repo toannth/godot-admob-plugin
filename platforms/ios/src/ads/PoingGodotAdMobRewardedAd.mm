@@ -102,4 +102,5 @@ void PoingGodotAdMobRewardedAd::_bind_methods() {
     ADD_SIGNAL(MethodInfo("on_rewarded_ad_showed_full_screen_content",          PropertyInfo(Variant::INT, "UID")));
 
     ADD_SIGNAL(MethodInfo("on_rewarded_ad_user_earned_reward",          PropertyInfo(Variant::INT, "UID"), PropertyInfo(Variant::DICTIONARY, "rewardedItemDictionary")));
+    ADD_SIGNAL(MethodInfo("on_rewarded_ad_paid",                        PropertyInfo(Variant::INT, "UID"), PropertyInfo(Variant::DICTIONARY, "adValueDictionary")));
 };

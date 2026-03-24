@@ -156,4 +156,5 @@ void PoingGodotAdMobAdView::_bind_methods() {
     ADD_SIGNAL(MethodInfo("on_ad_impression",       PropertyInfo(Variant::INT, "UID")));
     ADD_SIGNAL(MethodInfo("on_ad_loaded",           PropertyInfo(Variant::INT, "UID")));
     ADD_SIGNAL(MethodInfo("on_ad_opened",           PropertyInfo(Variant::INT, "UID")));
+    ADD_SIGNAL(MethodInfo("on_ad_view_paid",             PropertyInfo(Variant::INT, "UID"), PropertyInfo(Variant::DICTIONARY, "adValueDictionary")));
 };

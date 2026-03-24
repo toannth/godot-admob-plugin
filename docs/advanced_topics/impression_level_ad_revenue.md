@@ -227,10 +227,12 @@ Set the `on_ad_paid` callback **before** loading the ad. Below are examples for 
     func _load_native() -> void:
         var ad_unit_id := "ca-app-pub-3940256099942544/2247696110" if OS.get_name() == "Android" \
             else "ca-app-pub-3940256099942544/3986624511"
-        _native_ad = NativeOverlayAd.new()
-        _native_ad.on_ad_paid = func(ad_value: AdValue) -> void:
-            print("Native paid: %d %s" % [ad_value.value_micros, ad_value.currency_code])
-        _native_ad.load(ad_unit_id, AdRequest.new())
+        NativeOverlayAd.load(ad_unit_id, AdRequest.new(), NativeAdOptions.new(), func(native_ad: NativeOverlayAd, _error: LoadAdError):
+            if native_ad:
+                _native_ad = native_ad
+                _native_ad.on_ad_paid = func(ad_value: AdValue) -> void:
+                    print("Native paid: %d %s" % [ad_value.value_micros, ad_value.currency_code])
+        )
     ```
 
 === "C#"
@@ -244,8 +246,11 @@ Set the `on_ad_paid` callback **before** loading the ad. Below are examples for 
 
         NativeOverlayAd.Load(adUnitId, new AdRequest(), new NativeAdOptions(), (nativeAd, error) =>
         {
-            nativeAd.OnAdPaid += adValue =>
-                GD.Print($"Native paid: {adValue.ValueMicros} {adValue.CurrencyCode}");
+            if (nativeAd != null)
+            {
+                nativeAd.OnAdPaid += adValue =>
+                    GD.Print($"Native paid: {adValue.ValueMicros} {adValue.CurrencyCode}");
+            }
         });
     }
     ```

@@ -53,6 +53,16 @@
     self.bannerView.rootViewController = rootViewController;
 
     self.bannerView.delegate = self;
+
+    __weak BannerAd *weakSelf = self;
+    self.bannerView.paidEventHandler = ^(GADAdValue *_Nonnull value) {
+      BannerAd *strongSelf = weakSelf;
+      if (strongSelf) {
+        PoingGodotAdMobAdView::get_singleton()->emit_signal(
+            "on_ad_view_paid", [strongSelf.UID intValue],
+            [ObjectToGodotDictionary convertGADAdValueToDictionary:value]);
+      }
+    };
   }
   return self;
 }

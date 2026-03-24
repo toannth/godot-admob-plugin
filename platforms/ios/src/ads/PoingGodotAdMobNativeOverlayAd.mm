@@ -36,6 +36,7 @@ void PoingGodotAdMobNativeOverlayAd::_bind_methods() {
     ADD_SIGNAL(MethodInfo("on_native_overlay_ad_closed", PropertyInfo(Variant::INT, "uid")));
     ADD_SIGNAL(MethodInfo("on_native_overlay_ad_impression", PropertyInfo(Variant::INT, "uid")));
     ADD_SIGNAL(MethodInfo("on_native_overlay_ad_opened", PropertyInfo(Variant::INT, "uid")));
+    ADD_SIGNAL(MethodInfo("on_native_overlay_ad_paid", PropertyInfo(Variant::INT, "uid"), PropertyInfo(Variant::DICTIONARY, "adValueDictionary")));
 }
 
 int PoingGodotAdMobNativeOverlayAd::create() {
