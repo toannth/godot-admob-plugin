@@ -262,3 +262,4 @@ Set the `on_ad_paid` callback **before** loading the ad. Below are examples for 
 | `ad_value.value_micros` | `adValue.ValueMicros` | `int` / `long` | Revenue in micros (divide by 1,000,000 for actual value) |
 | `ad_value.currency_code` | `adValue.CurrencyCode` | `String` | ISO 4217 currency code |
 | `ad_value.precision_type` | `adValue.PrecisionType` | `int` | Accuracy of the estimate |
+| `ad_value.response_info` | `adValue.ResponseInfo` | `ResponseInfo` | Information about the ad response |
