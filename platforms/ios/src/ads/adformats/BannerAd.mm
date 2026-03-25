@@ -59,7 +59,6 @@
       BannerAd *strongSelf = weakSelf;
       if (strongSelf) {
         Dictionary adValueDictionary = [ObjectToGodotDictionary convertGADAdValueToDictionary:value];
-        adValueDictionary["response_info"] = [ObjectToGodotDictionary convertResponseInfoToDictionary:strongSelf.bannerView.responseInfo];
         PoingGodotAdMobAdView::get_singleton()->emit_signal(
             "on_ad_view_paid", [strongSelf.UID intValue],
             adValueDictionary);

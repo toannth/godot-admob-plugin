@@ -32,19 +32,17 @@ enum PrecisionType {
 var currency_code : String
 var precision : int
 var value_micros : int
-var response_info : ResponseInfo
 
-func _init(currency_code : String, precision : int, value_micros : int, response_info : ResponseInfo = null):
+func _init(currency_code : String, precision : int, value_micros : int):
 	self.currency_code = currency_code
 	self.precision = precision
 	self.value_micros = value_micros
-	self.response_info = response_info
 
 
 static func create(ad_value_dictionary : Dictionary) -> AdValue:
 	var currency_code : String = ad_value_dictionary["currency_code"]
 	var precision : int = ad_value_dictionary["precision_type"]
 	var value_micros : int = ad_value_dictionary["value_micros"]
-	var response_info : ResponseInfo = ResponseInfo.create(ad_value_dictionary.get("response_info", {}))
 	
-	return AdValue.new(currency_code, precision, value_micros, response_info)
+	return AdValue.new(currency_code, precision, value_micros)
+

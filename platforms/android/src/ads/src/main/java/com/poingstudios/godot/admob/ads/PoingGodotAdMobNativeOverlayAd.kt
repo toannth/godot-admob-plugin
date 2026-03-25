@@ -134,4 +134,10 @@ class PoingGodotAdMobNativeOverlayAd(godot: Godot?) : org.godotengine.godot.plug
         return nativeAds[uid]?.getHeightInPixels() ?: -1
     }
 
+
+    @UsedByGodot
+    fun get_response_info(uid: Int) : Dictionary {
+        return nativeAds[uid]?.getResponseInfo() ?: Dictionary()
+    }
+
 }

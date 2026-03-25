@@ -9,7 +9,6 @@
 
 @implementation NativeOverlayAd {
     GADAdLoader *_adLoader;
-    GADNativeAd *_nativeAd;
     GADTTemplateView *_templateView;
     NSMutableArray *_activeConstraints;
     int _adPosition;
@@ -20,6 +19,8 @@
     GADAdSize _customAdSize;
     BOOL _useCustomAdSize;
 }
+
+@synthesize nativeAd = _nativeAd;
 
 - (instancetype)initWithUID:(NSNumber *)uid {
     if ((self = [super init])) {
@@ -295,7 +296,6 @@
         NativeOverlayAd *strongSelf = weakSelf;
         if (strongSelf) {
             Dictionary adValueDictionary = [ObjectToGodotDictionary convertGADAdValueToDictionary:value];
-            adValueDictionary["response_info"] = [ObjectToGodotDictionary convertResponseInfoToDictionary:strongSelf->_nativeAd.responseInfo];
             PoingGodotAdMobNativeOverlayAd::get_singleton()->emit_signal("on_native_overlay_ad_paid",
                                                                          [strongSelf.UID intValue],
                                                                          adValueDictionary);

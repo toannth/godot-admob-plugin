@@ -101,7 +101,7 @@ The following example handles paid events for a rewarded ad:
         long valueMicros = adValue.ValueMicros;
         string currency = adValue.CurrencyCode;
         AdValue.PrecisionType precision = adValue.Precision;
-        ResponseInfo responseInfo = adValue.ResponseInfo;
+        ResponseInfo responseInfo = _rewardedAd.GetResponseInfo();
         string responseId = responseInfo.ResponseId;
 
         AdapterResponseInfo loadedAdapterResponseInfo = responseInfo.LoadedAdapterResponseInfo;
@@ -189,7 +189,7 @@ The following example sets a unique ad source name for a custom event:
     }
     ```
 
-For more information on the winning ad source, see [Retrieve information about the ad response](https://developers.google.com/admob/android/response-info).
+For more information on the winning ad source, see [Retrieve information about the ad response](response_info.md).
 
 ## Integrate with App Attribution Partners (AAP)
 
@@ -229,3 +229,4 @@ After an impression-level ad revenue event occurs for a bidding ad source throug
 Previously, you might have seen the precision type as a value other than `UNKNOWN` and an ad value more than 0.
 
 For details on sending a test ad request, see [Enable test devices](../enable_test_ads.md).
+

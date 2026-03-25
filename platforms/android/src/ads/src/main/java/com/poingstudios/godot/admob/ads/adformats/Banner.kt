@@ -131,7 +131,6 @@ class Banner(
 
             mAdView.setOnPaidEventListener { adValue ->
                 val adValueDictionary = adValue.convertToGodotDictionary()
-                adValueDictionary["response_info"] = mAdView.responseInfo?.convertToGodotDictionary() ?: Dictionary()
                 emitSignal(godot, pluginName, SignalInfos.onAdPaid, uid, adValueDictionary)
             }
 
@@ -251,4 +250,7 @@ class Banner(
         return mAdSize.getHeightInPixels(activity)
     }
 
+    fun getResponseInfo() : Dictionary {
+        return mAdView.responseInfo?.convertToGodotDictionary() ?: Dictionary()
+    }
 }

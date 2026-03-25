@@ -126,5 +126,9 @@ class PoingGodotAdMobAdView(godot: Godot?) : org.godotengine.godot.plugin.GodotP
         return banners[uid]?.getHeightInPixels() ?: -1
     }
 
+    @UsedByGodot
+    fun get_response_info(uid: Int) : Dictionary {
+        return banners[uid]?.getResponseInfo() ?: Dictionary()
+    }
 }
 

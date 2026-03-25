@@ -92,7 +92,6 @@ class PoingGodotAdMobRewardedInterstitialAd(godot: Godot?) : org.godotengine.god
                         rewardedInterstitialAds[uid] = rewardedInterstitialAd
                         rewardedInterstitialAd.setOnPaidEventListener { adValue ->
                             val adValueDictionary = adValue.convertToGodotDictionary()
-                adValueDictionary["response_info"] = rewardedInterstitialAd.responseInfo?.convertToGodotDictionary() ?: Dictionary()
                 emitSignal("on_rewarded_interstitial_ad_paid", uid, adValueDictionary)
                         }
                         rewardedInterstitialAd.fullScreenContentCallback = object: FullScreenContentCallback() {
@@ -154,4 +153,10 @@ class PoingGodotAdMobRewardedInterstitialAd(godot: Godot?) : org.godotengine.god
             rewardedInterstitialAds[uid]?.setServerSideVerificationOptions(serverSideVerificationOptionsDictionary.convertToServerSideVerificationOptions())
         }
     }
+
+    @UsedByGodot
+    fun get_response_info(uid: Int) : Dictionary {
+        return rewardedInterstitialAds[uid]?.responseInfo?.convertToGodotDictionary() ?: Dictionary()
+    }
+
 }

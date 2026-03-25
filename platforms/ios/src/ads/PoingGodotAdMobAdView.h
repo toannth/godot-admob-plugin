@@ -42,6 +42,7 @@ public:
     int create(Dictionary adViewDictionary);
     void load_ad(int uid, Dictionary adRequestDictionary, PackedStringArray keywords);
     void destroy(int uid);
+    Dictionary get_response_info(int uid);
     void hide(int uid);
     void show(int uid);
     void update_position(int uid, int position);

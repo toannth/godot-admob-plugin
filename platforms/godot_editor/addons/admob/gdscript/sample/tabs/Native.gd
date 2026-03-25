@@ -136,9 +136,10 @@ func _on_ad_load_finished(ad: NativeOverlayAd, error: LoadAdError) -> void:
 	_native_overlay_ad.ad_listener.on_ad_opened = _on_ad_opened
 	_native_overlay_ad.on_ad_paid = func(ad_value: AdValue) -> void:
 		var ad_source_name := "N/A"
-		if ad_value.response_info:
-			if ad_value.response_info.loaded_adapter_response_info:
-				ad_source_name = ad_value.response_info.loaded_adapter_response_info.ad_source_name
+		var response_info := _native_overlay_ad.get_response_info() if _native_overlay_ad else null
+		if response_info:
+			if response_info.loaded_adapter_response_info:
+				ad_source_name = response_info.loaded_adapter_response_info.ad_source_name
 		_log("Ad paid: %f %s (precision: %d, source: %s)" % [ad_value.value_micros / 1000000.0, ad_value.currency_code, ad_value.precision, ad_source_name])
 	
 	var style := NativeTemplateStyle.new()

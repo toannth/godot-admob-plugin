@@ -1,8 +1,8 @@
 // MIT License
 // Copyright (c) 2023-present Poing Studios
 
-using System;
 using System.Collections.Generic;
+using System;
 using Godot;
 using Godot.Collections;
 using PoingStudios.AdMob.Api.Core;
@@ -106,6 +106,12 @@ namespace PoingStudios.AdMob.Api
         public void Destroy()
         {
             _plugin?.Call("destroy", _uid);
+        }
+
+        public ResponseInfo GetResponseInfo()
+        {
+            var responseInfoDictionary = (Dictionary)_plugin.Call("get_response_info", _uid);
+            return ResponseInfo.Create(responseInfoDictionary);
         }
 
         public void Hide()

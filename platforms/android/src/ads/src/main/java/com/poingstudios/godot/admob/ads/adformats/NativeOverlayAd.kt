@@ -112,7 +112,6 @@ class NativeOverlayAd(
                 mNativeAd = nativeAd
                 nativeAd.setOnPaidEventListener { adValue ->
                     val adValueDictionary = adValue.convertToGodotDictionary()
-                    adValueDictionary["response_info"] = nativeAd.responseInfo?.convertToGodotDictionary() ?: Dictionary()
                     emitSignal(godot, pluginName, SignalInfos.onAdPaid, uid, adValueDictionary)
                 }
             }
@@ -296,4 +295,8 @@ class NativeOverlayAd(
     fun getHeight() = mTemplateView?.height ?: -1
     fun getWidthInPixels() = getWidth()
     fun getHeightInPixels() = getHeight()
+
+    fun getResponseInfo(): Dictionary {
+        return mNativeAd?.responseInfo?.convertToGodotDictionary() ?: Dictionary()
+    }
 }

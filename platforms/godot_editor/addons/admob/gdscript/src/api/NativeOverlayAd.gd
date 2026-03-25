@@ -81,6 +81,12 @@ func destroy() -> void:
 	if _plugin:
 		_plugin.destroy(_uid)
 
+func get_response_info() -> ResponseInfo:
+	if _plugin:
+		var response_info_dictionary : Dictionary = _plugin.get_response_info(_uid)
+		return ResponseInfo.create(response_info_dictionary)
+	return null
+
 ## Hides the ad from being shown.
 func hide() -> void:
 	if _plugin:

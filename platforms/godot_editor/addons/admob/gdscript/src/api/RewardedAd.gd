@@ -45,6 +45,12 @@ func destroy() -> void:
 	if _plugin:
 		_plugin.destroy(_uid)
 
+func get_response_info() -> ResponseInfo:
+	if _plugin:
+		var response_info_dictionary : Dictionary = _plugin.get_response_info(_uid)
+		return ResponseInfo.create(response_info_dictionary)
+	return null
+
 func set_server_side_verification_options(server_side_verification_options: ServerSideVerificationOptions):
 	if _plugin:
 		_plugin.set_server_side_verification_options(_uid, server_side_verification_options.convert_to_dictionary())

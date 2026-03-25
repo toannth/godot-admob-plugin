@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using Godot;
 using Godot.Collections;
 using PoingStudios.AdMob.Api.Core;
@@ -56,7 +57,7 @@ namespace PoingStudios.AdMob.Api
 			_onAdImpressionCallable = Callable.From<int>(OnAdImpression);
 			_onAdLoadedCallable = Callable.From<int>(OnAdLoaded);
 			_onAdOpenedCallable = Callable.From<int>(OnAdOpened);
-			_onAdPaidCallable = Callable.From<int, Dictionary>(OnAdPaid);
+			_onAdPaidCallable = Callable.From<int, Dictionary>(OnAdViewPaid);
 
 			if (_plugin != null)
 			{
@@ -98,6 +99,12 @@ namespace PoingStudios.AdMob.Api
 		public void Destroy()
 		{
 			_plugin?.Call("destroy", _uid);
+		}
+
+		public ResponseInfo GetResponseInfo()
+		{
+			var responseInfoDictionary = (Dictionary)_plugin.Call("get_response_info", _uid);
+			return ResponseInfo.Create(responseInfoDictionary);
 		}
 
 		public void Hide()
@@ -191,7 +198,7 @@ namespace PoingStudios.AdMob.Api
 			Callable.From(() => AdListener.OnAdOpened?.Invoke()).CallDeferred();
 		}
 
-		private void OnAdPaid(int uid, Dictionary adValueDictionary)
+		private void OnAdViewPaid(int uid, Dictionary adValueDictionary)
 		{
 			if (uid != _uid) return;
 			var adValue = AdValue.Create(adValueDictionary);

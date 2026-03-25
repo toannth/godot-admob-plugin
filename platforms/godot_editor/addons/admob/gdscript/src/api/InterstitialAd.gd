@@ -41,6 +41,12 @@ func destroy() -> void:
 	if _plugin:
 		_plugin.destroy(_uid)
 
+func get_response_info() -> ResponseInfo:
+	if _plugin:
+		var response_info_dictionary : Dictionary = _plugin.get_response_info(_uid)
+		return ResponseInfo.create(response_info_dictionary)
+	return null
+
 func register_callbacks() -> void:
 	if _plugin:
 		safe_connect(_plugin, "on_interstitial_ad_clicked", _on_interstitial_ad_clicked)

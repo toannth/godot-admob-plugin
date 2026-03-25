@@ -9,6 +9,8 @@
 
 @interface NativeOverlayAd : AdFormatBase <GADNativeAdLoaderDelegate, GADNativeAdDelegate>
 
+@property (nonatomic, strong, readonly) GADNativeAd *nativeAd;
+
 - (instancetype)initWithUID:(NSNumber *)uid;
 - (void)loadWithAdUnitId:(NSString *)adUnitId adRequest:(GADRequest *)adRequest options:(NSDictionary *)optionsDict;
 - (void)renderTemplate:(NSDictionary *)styleDict position:(int)position adSize:(NSDictionary *)adSizeDict;

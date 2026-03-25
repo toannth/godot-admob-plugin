@@ -137,10 +137,20 @@ int PoingGodotAdMobAdView::get_height_in_pixels(int uid) {
     return -1;
 }
 
+
+Dictionary PoingGodotAdMobAdView::get_response_info(int uid) {
+    BannerAd* adObj = this->getObject(uid);
+    if (adObj && adObj.bannerView && adObj.bannerView.responseInfo) {
+        return [ObjectToGodotDictionary convertResponseInfoToDictionary:adObj.bannerView.responseInfo];
+    }
+    return Dictionary();
+}
+
 void PoingGodotAdMobAdView::_bind_methods() {
     ClassDB::bind_method(D_METHOD("create"),                &PoingGodotAdMobAdView::create);
     ClassDB::bind_method(D_METHOD("load_ad"),               &PoingGodotAdMobAdView::load_ad);
     ClassDB::bind_method(D_METHOD("destroy"),               &PoingGodotAdMobAdView::destroy);
+    ClassDB::bind_method(D_METHOD("get_response_info"), &PoingGodotAdMobAdView::get_response_info);
     ClassDB::bind_method(D_METHOD("hide"),                  &PoingGodotAdMobAdView::hide);
     ClassDB::bind_method(D_METHOD("show"),                  &PoingGodotAdMobAdView::show);
     ClassDB::bind_method(D_METHOD("update_position", "uid", "position"), &PoingGodotAdMobAdView::update_position);

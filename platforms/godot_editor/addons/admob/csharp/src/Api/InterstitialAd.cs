@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using Godot;
 using Godot.Collections;
 using PoingStudios.AdMob.Api.Core;
@@ -66,6 +67,12 @@ namespace PoingStudios.AdMob.Api
         public void Destroy()
         {
             _plugin?.Call("destroy", _uid);
+        }
+
+        public ResponseInfo GetResponseInfo()
+        {
+            var responseInfoDictionary = (Dictionary)_plugin.Call("get_response_info", _uid);
+            return ResponseInfo.Create(responseInfoDictionary);
         }
 
         private void RegisterCallbacks()
