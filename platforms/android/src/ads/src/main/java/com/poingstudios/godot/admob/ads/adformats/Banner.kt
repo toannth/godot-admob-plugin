@@ -253,4 +253,8 @@ class Banner(
     fun getResponseInfo() : Dictionary {
         return mAdView.responseInfo?.convertToGodotDictionary() ?: Dictionary()
     }
+
+    fun isCollapsible(): Boolean {
+        return mAdView.isCollapsible
+    }
 }

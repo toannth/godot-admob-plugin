@@ -104,11 +104,14 @@ fun Dictionary.convertToAdRequest(keywords : Array<String>) : AdRequest{
     }
     val extras = this["extras"] as Dictionary
 
-    for ((key) in extras) {
+    if (extras.isNotEmpty()) {
         val networkExtrasBundle = Bundle()
-        when (val value = extras[key]) {
-            is String -> networkExtrasBundle.putString(key, value)
-            is Number -> networkExtrasBundle.putInt(key, value.toInt())
+        for ((key) in extras) {
+            when (val value = extras[key]) {
+                is String -> networkExtrasBundle.putString(key, value)
+                is Number -> networkExtrasBundle.putInt(key, value.toInt())
+                is Boolean -> networkExtrasBundle.putBoolean(key, value)
+            }
         }
         adRequestBuilder.addNetworkExtrasBundle(AdMobAdapter::class.java, networkExtrasBundle)
     }

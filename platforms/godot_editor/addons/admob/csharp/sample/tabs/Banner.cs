@@ -43,6 +43,7 @@ public partial class Banner : BaseTab
 	private Button _showBtn;
 	private Button _hideBtn;
 	private Button _getSizeBtn;
+	private CheckButton _collapsibleToggle;
 
 	private LineEdit _xValue;
 	private LineEdit _yValue;
@@ -56,6 +57,7 @@ public partial class Banner : BaseTab
 		_showBtn = GetNode<Button>("%BannerActions/ShowBanner");
 		_hideBtn = GetNode<Button>("%BannerActions/HideBanner");
 		_getSizeBtn = GetNode<Button>("%BannerActions/GetSize");
+		_collapsibleToggle = GetNode<CheckButton>("%Collapsible");
 
 		_loadBtn.Pressed += OnLoadPressed;
 		_loadBackgroundBtn.Pressed += OnLoadBackgroundPressed;
@@ -140,7 +142,7 @@ public partial class Banner : BaseTab
 		{
 			OnAdLoaded = () =>
 			{
-				Log("Ad loaded successfully");
+				Log($"Ad loaded successfully. Collapsible: {_adView.IsCollapsible()}");
 				UpdateUI(true);
 				if (!_isHidden)
 				{
@@ -167,7 +169,20 @@ public partial class Banner : BaseTab
 			string adSourceName = _adView?.GetResponseInfo()?.LoadedAdapterResponseInfo?.AdSourceName ?? "N/A";
 			Log(string.Format("Ad paid: {0:F} {1} (precision: {2}, source: {3})", adValue.ValueMicros / 1000000.0, adValue.CurrencyCode, adValue.Precision, adSourceName));
 		};
-		_adView.LoadAd(new AdRequest());
+
+		var adRequest = new AdRequest();
+		if (_collapsibleToggle.ButtonPressed)
+		{
+			if (_adPosition == AdPosition.Top)
+			{
+				adRequest.Extras["collapsible"] = "top";
+			}
+			else
+			{
+				adRequest.Extras["collapsible"] = "bottom";
+			}
+		}
+		_adView.LoadAd(adRequest);
 	}
 
 	private void OnLoadPressed() => LoadBanner(false);

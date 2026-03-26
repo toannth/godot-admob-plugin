@@ -35,6 +35,7 @@ var _is_hidden := false
 @onready var _show_button: Button = $ActionsCard/VBox/BannerActions/ShowBanner
 @onready var _hide_button: Button = $ActionsCard/VBox/BannerActions/HideBanner
 @onready var _get_size_button: Button = $ActionsCard/VBox/BannerActions/GetSize
+@onready var _collapsible_toggle: CheckButton = %Collapsible
 @onready var _x_value: LineEdit = %XValue
 @onready var _y_value: LineEdit = %YValue
 
@@ -83,8 +84,15 @@ func _load_banner(hide_immediately: bool = false) -> void:
 	_is_hidden = hide_immediately
 	if _is_hidden:
 		_ad_view.hide()
-		
-	_ad_view.load_ad(AdRequest.new())
+	
+	var ad_request := AdRequest.new()
+	if _collapsible_toggle.button_pressed:
+		if _ad_position == AdPosition.TOP:
+			ad_request.extras["collapsible"] = "top"
+		else:
+			ad_request.extras["collapsible"] = "bottom"
+			
+	_ad_view.load_ad(ad_request)
 
 func _on_load_banner_pressed() -> void:
 	_load_banner(false)
@@ -151,7 +159,7 @@ func _on_ad_impression() -> void:
 	_log("Ad impression recorded")
 
 func _on_ad_loaded() -> void:
-	_log("Ad loaded successfully")
+	_log("Ad loaded successfully. Collapsible: %s" % str(_ad_view.is_collapsible()))
 	_update_ui_state(true)
 	if Registry.safe_area and not _is_hidden:
 		Registry.safe_area.update_ad_overlap(_ad_view)
