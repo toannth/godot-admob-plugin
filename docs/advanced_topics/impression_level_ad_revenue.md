@@ -46,7 +46,7 @@ The following example handles paid events for a rewarded ad:
         var value_micros: int = ad_value.value_micros
         var currency: String = ad_value.currency_code
         var precision := ad_value.precision # (AdValue.PrecisionType)
-        var response_info: ResponseInfo = ad_value.response_info
+        var response_info: ResponseInfo = _rewarded_ad.get_response_info()
         var response_id: String = response_info.response_id
 
         var loaded_adapter_response_info: AdapterResponseInfo = response_info.loaded_adapter_response_info
