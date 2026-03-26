@@ -70,6 +70,15 @@ func _load_banner(hide_immediately: bool = false) -> void:
 	var ad_size := AdSize.get_current_orientation_anchored_adaptive_banner_ad_size(AdSize.FULL_WIDTH)
 	_ad_view = AdView.new(_get_ad_unit_id(), ad_size, _ad_position)
 	_ad_view.ad_listener = _ad_listener
+	_ad_view.on_ad_paid = func(ad_value: AdValue) -> void:
+		var ad_source_name := "N/A"
+		var response_info := _ad_view.get_response_info() if _ad_view else null
+		if response_info:
+			if response_info.loaded_adapter_response_info:
+				ad_source_name = response_info.loaded_adapter_response_info.ad_source_name
+			else:
+				ad_source_name = "None"
+		_log("Ad paid: %f %s (precision: %d, source: %s)" % [ad_value.value_micros / 1000000.0, ad_value.currency_code, ad_value.precision, ad_source_name])
 	
 	_is_hidden = hide_immediately
 	if _is_hidden:

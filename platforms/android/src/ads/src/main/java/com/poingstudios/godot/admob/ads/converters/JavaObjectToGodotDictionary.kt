@@ -30,6 +30,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.ResponseInfo
 import com.google.android.gms.ads.initialization.AdapterStatus
 import com.google.android.gms.ads.initialization.InitializationStatus
+import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.ump.FormError
 import org.godotengine.godot.Dictionary
@@ -140,6 +141,16 @@ fun RewardItem.convertToGodotDictionary() : Dictionary{
 
     dictionary["amount"] = amount
     dictionary["type"] = type
+
+    return dictionary
+}
+
+fun AdValue.convertToGodotDictionary() : Dictionary {
+    val dictionary = Dictionary()
+
+    dictionary["value_micros"] = valueMicros
+    dictionary["currency_code"] = currencyCode
+    dictionary["precision_type"] = precisionType
 
     return dictionary
 }

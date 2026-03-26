@@ -82,10 +82,7 @@ class PoingGodotAdMobAppOpenAd(godot: Godot?) : org.godotengine.godot.plugin.God
                 override fun onAdLoaded(ad: AppOpenAd) {
                     appOpenAds[uid] = ad
                     ad.setOnPaidEventListener { adValue ->
-                        val adValueDictionary = Dictionary()
-                        adValueDictionary["value_micros"] = adValue.valueMicros
-                        adValueDictionary["currency_code"] = adValue.currencyCode
-                        adValueDictionary["precision_type"] = adValue.precisionType
+                        val adValueDictionary = adValue.convertToGodotDictionary()
                         emitSignal("on_app_open_ad_paid", uid, adValueDictionary)
                     }
                     ad.fullScreenContentCallback = object : FullScreenContentCallback() {

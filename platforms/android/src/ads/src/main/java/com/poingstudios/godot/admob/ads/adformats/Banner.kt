@@ -87,6 +87,7 @@ class Banner(
         val onAdImpression = SignalInfo("on_ad_impression", Integer::class.java)
         val onAdLoaded = SignalInfo("on_ad_loaded", Integer::class.java)
         val onAdOpened = SignalInfo("on_ad_opened", Integer::class.java)
+        val onAdPaid = SignalInfo("on_ad_view_paid", Integer::class.java, Dictionary::class.java)
     }
 
     init {
@@ -127,6 +128,11 @@ class Banner(
                             emitSignal(godot, pluginName, SignalInfos.onAdOpened, uid)
                         }
                     }
+
+            mAdView.setOnPaidEventListener { adValue ->
+                val adValueDictionary = adValue.convertToGodotDictionary()
+                emitSignal(godot, pluginName, SignalInfos.onAdPaid, uid, adValueDictionary)
+            }
 
             godotLayout.addView(mAdView)
             godotLayout.addOnLayoutChangeListener(mLayoutChangeListener)
@@ -244,4 +250,7 @@ class Banner(
         return mAdSize.getHeightInPixels(activity)
     }
 
+    fun getResponseInfo() : Dictionary {
+        return mAdView.responseInfo?.convertToGodotDictionary() ?: Dictionary()
+    }
 }

@@ -26,6 +26,7 @@ extends MobileSingletonPlugin
 static var _plugin = _get_plugin("PoingGodotAdMobNativeOverlayAd")
 
 var ad_listener := AdListener.new()
+var on_ad_paid: Callable = func(_ad_value: AdValue): pass
 var _uid: int
 var _ad_load_callback: Callable
 
@@ -36,6 +37,7 @@ func _init(uid: int) -> void:
 		safe_connect(_plugin, "on_native_overlay_ad_closed", _on_ad_closed)
 		safe_connect(_plugin, "on_native_overlay_ad_impression", _on_ad_impression)
 		safe_connect(_plugin, "on_native_overlay_ad_opened", _on_ad_opened)
+		safe_connect(_plugin, "on_native_overlay_ad_paid", _on_ad_paid)
 
 ## Loads a native overlay ad.
 ## [param ad_unit_id]: An ad unit ID created in the AdMob UI.
@@ -78,6 +80,12 @@ func set_template_position(ad_position: AdPosition) -> void:
 func destroy() -> void:
 	if _plugin:
 		_plugin.destroy(_uid)
+
+func get_response_info() -> ResponseInfo:
+	if _plugin:
+		var response_info_dictionary : Dictionary = _plugin.get_response_info(_uid)
+		return ResponseInfo.create(response_info_dictionary)
+	return null
 
 ## Hides the ad from being shown.
 func hide() -> void:
@@ -131,4 +139,8 @@ func _on_ad_impression(uid: int) -> void:
 func _on_ad_opened(uid: int) -> void:
 	if uid == self._uid and ad_listener.on_ad_opened.is_valid():
 		ad_listener.on_ad_opened.call_deferred()
+
+func _on_ad_paid(uid: int, ad_value_dictionary: Dictionary) -> void:
+	if uid == self._uid and on_ad_paid.is_valid():
+		on_ad_paid.call_deferred(AdValue.create(ad_value_dictionary))
 #endregion

@@ -25,6 +25,7 @@ public:
     void render_template(int uid, Dictionary style_dictionary, int position, Dictionary ad_size_dictionary);
     void render_template_custom_position(int uid, Dictionary style_dictionary, int x, int y, Dictionary ad_size_dictionary);
     void destroy(int uid);
+    Dictionary get_response_info(int uid);
     void hide(int uid);
     void show(int uid);
     void update_position(int uid, int position);

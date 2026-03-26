@@ -79,23 +79,6 @@ static NSString *_Nonnull const GADTBlue = @"#5C84F0";
                                                options:0
                                                metrics:nil
                                                   views:NSDictionaryOfVariableBindings(_rootView)]];
-
-    // Bridge outlets from _rootView to self so Google SDK can track clicks.
-    if ([_rootView isKindOfClass:[GADNativeAdView class]]) {
-      GADNativeAdView *adView = (GADNativeAdView *)_rootView;
-      self.callToActionView = adView.callToActionView;
-      self.headlineView = adView.headlineView;
-      self.bodyView = adView.bodyView;
-      self.advertiserView = adView.advertiserView;
-      self.storeView = adView.storeView;
-      self.iconView = adView.iconView;
-      self.starRatingView = adView.starRatingView;
-      self.mediaView = adView.mediaView;
-      if ([_rootView isKindOfClass:[GADTTemplateView class]]) {
-        self.adBadge = ((GADTTemplateView *)_rootView).adBadge;
-      }
-    }
-
     [self applyStyles];
     [self styleAdBadge];
   }

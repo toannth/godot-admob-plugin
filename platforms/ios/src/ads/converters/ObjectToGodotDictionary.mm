@@ -146,7 +146,7 @@
 + (Dictionary)convertGADAdValueToDictionary:(GADAdValue *)adValue {
     Dictionary dictionary;
 
-    dictionary["value_micros"] = (int64_t)([adValue.value decimalNumberByMultiplyingByPowerOf10:6].doubleValue);
+    dictionary["value_micros"] = (int64_t)([adValue.value decimalNumberByMultiplyingByPowerOf10:6].longLongValue);
     dictionary["currency_code"] = [adValue.currencyCode UTF8String];
     dictionary["precision_type"] = (int)adValue.precision;
 

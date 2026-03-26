@@ -58,6 +58,7 @@ class PoingGodotAdMobNativeOverlayAd(godot: Godot?) : org.godotengine.godot.plug
         signals.add(NativeOverlayAd.SignalInfos.onAdClosed)
         signals.add(NativeOverlayAd.SignalInfos.onAdImpression)
         signals.add(NativeOverlayAd.SignalInfos.onAdOpened)
+        signals.add(NativeOverlayAd.SignalInfos.onAdPaid)
         return signals
     }
 
@@ -131,6 +132,12 @@ class PoingGodotAdMobNativeOverlayAd(godot: Godot?) : org.godotengine.godot.plug
     @UsedByGodot
     fun get_height_in_pixels(uid : Int) : Int {
         return nativeAds[uid]?.getHeightInPixels() ?: -1
+    }
+
+
+    @UsedByGodot
+    fun get_response_info(uid: Int) : Dictionary {
+        return nativeAds[uid]?.getResponseInfo() ?: Dictionary()
     }
 
 }

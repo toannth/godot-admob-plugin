@@ -10,7 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://bp0dyr8cp5ye0" path="res://addons/admob/assets/pos_bottom_left.svg" id="8_bl"]
 [ext_resource type="Texture2D" uid="uid://5v6slm2g7ad0" path="res://addons/admob/assets/pos_bottom.svg" id="9_b"]
 [ext_resource type="Texture2D" uid="uid://e3dqlgeny8lx" path="res://addons/admob/assets/pos_bottom_right.svg" id="10_br"]
-[ext_resource type="StyleBox" uid="uid://dgayun5r8o5r8" path="res://addons/admob/assets/style_box_empty.tres" id="11_empty"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_p1r38"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_bg"]
 bg_color = Color(1, 1, 1, 1)
@@ -188,7 +189,7 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_main_bg")
 theme_override_styles/hover = SubResource("StyleBoxFlat_main_bg")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_main_bg")
-theme_override_styles/focus = ExtResource("11_empty")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_p1r38")
 
 [node name="CTABGLabel" type="Label" parent="StyleCard/VBox/ColorGrid"]
 layout_mode = 2
@@ -203,7 +204,7 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_cta_bg")
 theme_override_styles/hover = SubResource("StyleBoxFlat_cta_bg")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_cta_bg")
-theme_override_styles/focus = ExtResource("11_empty")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_p1r38")
 
 [node name="CTATextLabel" type="Label" parent="StyleCard/VBox/ColorGrid"]
 layout_mode = 2
@@ -218,7 +219,7 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_cta_text")
 theme_override_styles/hover = SubResource("StyleBoxFlat_cta_text")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_cta_text")
-theme_override_styles/focus = ExtResource("11_empty")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_p1r38")
 
 [node name="CustomCard" type="PanelContainer" parent="."]
 layout_mode = 2

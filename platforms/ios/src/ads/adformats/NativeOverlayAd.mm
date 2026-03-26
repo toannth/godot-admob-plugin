@@ -9,7 +9,6 @@
 
 @implementation NativeOverlayAd {
     GADAdLoader *_adLoader;
-    GADNativeAd *_nativeAd;
     GADTTemplateView *_templateView;
     NSMutableArray *_activeConstraints;
     int _adPosition;
@@ -20,6 +19,8 @@
     GADAdSize _customAdSize;
     BOOL _useCustomAdSize;
 }
+
+@synthesize nativeAd = _nativeAd;
 
 - (instancetype)initWithUID:(NSNumber *)uid {
     if ((self = [super init])) {
@@ -121,13 +122,13 @@
     }
     
     [self applyStylesToTemplate];
-    _templateView.nativeAd = _nativeAd;
     
     UIWindow *window = [WindowHelper getCurrentWindow];
     if (window) {
-        _templateView.translatesAutoresizingMaskIntoConstraints = NO;
+        _templateView.translatesAutoresizingMaskIntoConstraints = YES;
         [window addSubview:_templateView];
         [window bringSubviewToFront:_templateView];
+        _templateView.nativeAd = _nativeAd;
         [self updatePositionLogic];
     }
 }
@@ -191,64 +192,56 @@
     UIWindow *window = [WindowHelper getCurrentWindow];
     if (!window) return;
     
+    // Remove any previous constraints just in case
     [NSLayoutConstraint deactivateConstraints:_activeConstraints];
     [_activeConstraints removeAllObjects];
+
+    CGRect parentBounds = window.bounds;
+    UIEdgeInsets safeAreaInsets = UIEdgeInsetsZero;
+    if (@available(iOS 11.0, *)) {
+        safeAreaInsets = window.safeAreaInsets;
+        parentBounds = UIEdgeInsetsInsetRect(parentBounds, safeAreaInsets);
+    }
     
-    UILayoutGuide *safeArea = window.safeAreaLayoutGuide;
+    // Set size
+    CGRect adFrame = _templateView.frame;
+    if (_useCustomAdSize) {
+        adFrame.size = _customAdSize.size;
+    } else {
+        adFrame.size.width = window.bounds.size.width;
+        // Keep original aspect/height from NIB if not specified? 
+        // GADTTemplateView usually provides its own height.
+    }
+    _templateView.frame = adFrame;
+
+    CGFloat centerX = CGRectGetMidX(parentBounds);
+    CGFloat centerY = CGRectGetMidY(parentBounds);
     
+    CGFloat top = CGRectGetMinY(parentBounds) + CGRectGetMidY(_templateView.bounds);
+    CGFloat bottom = CGRectGetMaxY(parentBounds) - CGRectGetMidY(_templateView.bounds);
+    CGFloat left = CGRectGetMinX(parentBounds) + CGRectGetMidX(_templateView.bounds);
+    CGFloat right = CGRectGetMaxX(parentBounds) - CGRectGetMidX(_templateView.bounds);
+
+    CGPoint center = CGPointMake(centerX, top);
+
     if (_adPosition == -1) { // Custom
-        [_activeConstraints addObject:[_templateView.leftAnchor constraintEqualToAnchor:window.leftAnchor constant:_customX]];
-        [_activeConstraints addObject:[_templateView.topAnchor constraintEqualToAnchor:window.topAnchor constant:_customY]];
+        center = CGPointMake(CGRectGetMinX(window.bounds) + _customX + CGRectGetMidX(_templateView.bounds),
+                             CGRectGetMinY(window.bounds) + _customY + CGRectGetMidY(_templateView.bounds));
     } else {
         switch (_adPosition) {
-            case 0: // TOP
-                [_activeConstraints addObject:[_templateView.centerXAnchor constraintEqualToAnchor:safeArea.centerXAnchor]];
-                [_activeConstraints addObject:[_templateView.topAnchor constraintEqualToAnchor:safeArea.topAnchor]];
-                break;
-            case 1: // BOTTOM
-                [_activeConstraints addObject:[_templateView.centerXAnchor constraintEqualToAnchor:safeArea.centerXAnchor]];
-                [_activeConstraints addObject:[_templateView.bottomAnchor constraintEqualToAnchor:safeArea.bottomAnchor]];
-                break;
-            case 2: // LEFT
-                [_activeConstraints addObject:[_templateView.leftAnchor constraintEqualToAnchor:safeArea.leftAnchor]];
-                [_activeConstraints addObject:[_templateView.bottomAnchor constraintEqualToAnchor:safeArea.bottomAnchor]];
-                break;
-            case 3: // RIGHT
-                [_activeConstraints addObject:[_templateView.rightAnchor constraintEqualToAnchor:safeArea.rightAnchor]];
-                [_activeConstraints addObject:[_templateView.bottomAnchor constraintEqualToAnchor:safeArea.bottomAnchor]];
-                break;
-            case 4: // TOP_LEFT
-                [_activeConstraints addObject:[_templateView.leftAnchor constraintEqualToAnchor:safeArea.leftAnchor]];
-                [_activeConstraints addObject:[_templateView.topAnchor constraintEqualToAnchor:safeArea.topAnchor]];
-                break;
-            case 5: // TOP_RIGHT
-                [_activeConstraints addObject:[_templateView.rightAnchor constraintEqualToAnchor:safeArea.rightAnchor]];
-                [_activeConstraints addObject:[_templateView.topAnchor constraintEqualToAnchor:safeArea.topAnchor]];
-                break;
-            case 6: // BOTTOM_LEFT
-                [_activeConstraints addObject:[_templateView.leftAnchor constraintEqualToAnchor:safeArea.leftAnchor]];
-                [_activeConstraints addObject:[_templateView.bottomAnchor constraintEqualToAnchor:safeArea.bottomAnchor]];
-                break;
-            case 7: // BOTTOM_RIGHT
-                [_activeConstraints addObject:[_templateView.rightAnchor constraintEqualToAnchor:safeArea.rightAnchor]];
-                [_activeConstraints addObject:[_templateView.bottomAnchor constraintEqualToAnchor:safeArea.bottomAnchor]];
-                break;
-            case 8: // CENTER
-                [_activeConstraints addObject:[_templateView.centerXAnchor constraintEqualToAnchor:safeArea.centerXAnchor]];
-                [_activeConstraints addObject:[_templateView.centerYAnchor constraintEqualToAnchor:safeArea.centerYAnchor]];
-                break;
+            case 0: center = CGPointMake(centerX, top); break; // TOP
+            case 1: center = CGPointMake(centerX, bottom); break; // BOTTOM
+            case 2: center = CGPointMake(left, centerY); break; // LEFT
+            case 3: center = CGPointMake(right, centerY); break; // RIGHT
+            case 4: center = CGPointMake(left, top); break; // TOP_LEFT
+            case 5: center = CGPointMake(right, top); break; // TOP_RIGHT
+            case 6: center = CGPointMake(left, bottom); break; // BOTTOM_LEFT
+            case 7: center = CGPointMake(right, bottom); break; // BOTTOM_RIGHT
+            case 8: center = CGPointMake(centerX, centerY); break; // CENTER
         }
     }
     
-    if (_useCustomAdSize) {
-        [_activeConstraints addObject:[_templateView.widthAnchor constraintEqualToConstant:_customAdSize.size.width]];
-        [_activeConstraints addObject:[_templateView.heightAnchor constraintEqualToConstant:_customAdSize.size.height]];
-    } else {
-        [_activeConstraints addObject:[_templateView.widthAnchor constraintEqualToAnchor:window.widthAnchor]];
-    }
-    
-    [NSLayoutConstraint activateConstraints:_activeConstraints];
-    [window layoutIfNeeded];
+    _templateView.center = center;
 }
 
 - (void)updatePosition:(int)position {
@@ -297,6 +290,18 @@
 - (void)adLoader:(GADAdLoader *)adLoader didReceiveNativeAd:(GADNativeAd *)nativeAd {
     _nativeAd = nativeAd;
     _nativeAd.delegate = self;
+
+    __weak NativeOverlayAd *weakSelf = self;
+    _nativeAd.paidEventHandler = ^(GADAdValue *_Nonnull value) {
+        NativeOverlayAd *strongSelf = weakSelf;
+        if (strongSelf) {
+            Dictionary adValueDictionary = [ObjectToGodotDictionary convertGADAdValueToDictionary:value];
+            PoingGodotAdMobNativeOverlayAd::get_singleton()->emit_signal("on_native_overlay_ad_paid",
+                                                                         [strongSelf.UID intValue],
+                                                                         adValueDictionary);
+        }
+    };
+
     PoingGodotAdMobNativeOverlayAd::get_singleton()->emit_signal("on_native_overlay_ad_loaded", [self.UID intValue]);
 }
 

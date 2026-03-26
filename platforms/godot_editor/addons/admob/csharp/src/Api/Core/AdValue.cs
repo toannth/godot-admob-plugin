@@ -26,21 +26,28 @@ namespace PoingStudios.AdMob.Api.Core
 {
     public class AdValue
     {
+        public enum PrecisionType
+        {
+            Unknown = 0,
+            Estimated = 1,
+            PublisherProvided = 2,
+            Precise = 3
+        }
         public string CurrencyCode { get; }
-        public int PrecisionType { get; }
+        public PrecisionType Precision { get; }
         public long ValueMicros { get; }
 
-        public AdValue(string currencyCode, int precisionType, long valueMicros)
+        public AdValue(string currencyCode, PrecisionType precision, long valueMicros)
         {
             CurrencyCode = currencyCode;
-            PrecisionType = precisionType;
+            Precision = precision;
             ValueMicros = valueMicros;
         }
 
         public static AdValue Create(Dictionary adValueDictionary)
         {
             var currencyCode = (string)adValueDictionary["currency_code"];
-            var precisionType = (int)adValueDictionary["precision_type"];
+            var precisionType = (PrecisionType)(int)adValueDictionary["precision_type"];
             var valueMicros = (long)adValueDictionary["value_micros"];
 
             return new AdValue(currencyCode, precisionType, valueMicros);

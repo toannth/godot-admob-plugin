@@ -17,6 +17,15 @@ PoingGodotAdMobNativeOverlayAd *PoingGodotAdMobNativeOverlayAd::get_singleton() 
     return instance;
 }
 
+
+Dictionary PoingGodotAdMobNativeOverlayAd::get_response_info(int uid) {
+    NativeOverlayAd* adObj = this->getObject(uid);
+    if (adObj && adObj.nativeAd && adObj.nativeAd.responseInfo) {
+        return [ObjectToGodotDictionary convertResponseInfoToDictionary:adObj.nativeAd.responseInfo];
+    }
+    return Dictionary();
+}
+
 void PoingGodotAdMobNativeOverlayAd::_bind_methods() {
     ClassDB::bind_method(D_METHOD("create"), &PoingGodotAdMobNativeOverlayAd::create);
     ClassDB::bind_method(D_METHOD("load", "ad_unit_id", "ad_request_dictionary", "keywords", "options_dictionary", "uid"), &PoingGodotAdMobNativeOverlayAd::load);
@@ -36,6 +45,7 @@ void PoingGodotAdMobNativeOverlayAd::_bind_methods() {
     ADD_SIGNAL(MethodInfo("on_native_overlay_ad_closed", PropertyInfo(Variant::INT, "uid")));
     ADD_SIGNAL(MethodInfo("on_native_overlay_ad_impression", PropertyInfo(Variant::INT, "uid")));
     ADD_SIGNAL(MethodInfo("on_native_overlay_ad_opened", PropertyInfo(Variant::INT, "uid")));
+    ADD_SIGNAL(MethodInfo("on_native_overlay_ad_paid", PropertyInfo(Variant::INT, "uid"), PropertyInfo(Variant::DICTIONARY, "adValueDictionary")));
 }
 
 int PoingGodotAdMobNativeOverlayAd::create() {
