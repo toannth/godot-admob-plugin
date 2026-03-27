@@ -41,8 +41,8 @@ If the loaded ad is a collapsible banner, the banner shows the collapsible overl
     _adView.LoadAd(adRequest);
     ```
 
-!!! warning "Important"
-    The collapsible banner feature is not available for large anchored adaptive banners. If your app requires collapsible functionality, use standard anchored adaptive banners.
+!!! info "Important"
+    The collapsible banner feature is not available for large anchored adaptive banners. If your app requires collapsible functionality, use [standard anchored adaptive banners](sizes/anchored_adaptive.md).
 
 ## Ads refreshing behavior
 
