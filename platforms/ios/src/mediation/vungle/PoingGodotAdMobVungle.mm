@@ -43,7 +43,7 @@ PoingGodotAdMobVungle *PoingGodotAdMobVungle::get_singleton() {
 void PoingGodotAdMobVungle::update_consent_status(int status, String consent_message_version) {
     NSString* consentMessageVersionNS = [NSString stringWithCString:consent_message_version.utf8().get_data() encoding: NSUTF8StringEncoding];
 
-    [VunglePrivacySettings setGDPRStatus:status];
+    [VunglePrivacySettings setGDPRStatus:status == 0];
     [VunglePrivacySettings setGDPRMessageVersion:consentMessageVersionNS];
 
     NSLog(@"set vungle consent status, message: %@ status: %i", consentMessageVersionNS, status);
